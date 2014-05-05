@@ -42,14 +42,34 @@ class CTComSDK
         $this->sts = $this->aws->get('Sts');
     }
     
+    // Print on STDOUT
     private function log_out($type, $message)
     {
         echo("[$type] $message\n");
     }
 
+    // Initialize SQS client
+    // Get temporary credentials using AWS STS service
     private function init_sqs_client($client)
     {
-        // Test if we need to renew credentials
+        // If no client provided, we don't use tmp credentials
+        // We use the credentials provided in controler
+        if (!$client) {
+            if (!$this->sqs) 
+            {
+                try {
+                    if ($this->debug)
+                        $this->log_out("DEBUG", "Using execution credentials for SQS");
+                    $this->sqs = $this->aws->get('Sqs');
+                } catch (\Aws\Sqs\Exception\SqsException $e) {
+                    $this->log_out("ERROR", $e->getMessage());
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Test if we need to renew tmp credentials
         if (isset($this->assumedRole) && $this->assumedRole &&
             isset($this->assumedRole["Credentials"]["Expiration"]) &&
             $this->assumedRole["Credentials"]["Expiration"])
@@ -76,7 +96,7 @@ class CTComSDK
                 $assume['ExternalId'] = $externalId;
             
             if ($this->debug)
-                $this->log_out("DEBUG", "Getting new credentials from STS service!");
+                $this->log_out("DEBUG", "Getting new temporary credentials from SQS.");
 
             // Get TMP credentials
             $this->assumedRole = $this->sts->assumeRole($assume);
@@ -105,8 +125,14 @@ class CTComSDK
         return true;
     }
     
+    /**
+     * RECEIVE
+     */
+
+    // Poll one message at a time from the provided SQS queue
     public function receive_message($client, $queue, $timeout)
     {
+        // Init SQS client
         if (!$this->init_sqs_client($client))
             return false;
  
@@ -117,7 +143,7 @@ class CTComSDK
                     "Polling from '$queue' ..."
                 );
             
-            // Loop for message 
+            // Poll from SQS to check for new message 
             $result = $this->sqs->receiveMessage(array(
                     'QueueUrl'        => $queue,
                     'WaitTimeSeconds' => $timeout,
@@ -129,6 +155,7 @@ class CTComSDK
             return false;
         }
         
+        // Get the message if any and return it to the caller
         if (($messages = $result->get('Messages')) &&
             count($message))
         {
@@ -142,8 +169,10 @@ class CTComSDK
         }
     }
     
+    // Delete a message from SQS queue
     public function delete_message($client, $queue, $msg)
     {
+        // Init SQS client
         if (!$this->init_sqs_client($client))
             return false;
         
@@ -157,5 +186,86 @@ class CTComSDK
         }
         
         return true;
+    }
+
+
+    /**
+     * SEND FROM CloudTranscode
+     */
+
+    public function job_queued()
+    {
+    }
+
+    public function job_scheduled()
+    {
+    }
+
+    public function job_started()
+    {
+    }
+
+    public function job_failed()
+    {
+    }
+
+    public function job_timeout()
+    {
+    }
+
+    public function job_canceled()
+    {
+    }
+
+    public function activity_scheduled()
+    {
+    }
+
+    public function activity_started()
+    {
+    }
+
+    public function activity_failed()
+    {
+    }
+
+    public function activity_timeout()
+    {
+    }
+
+    public function activity_canceled()
+    {
+    }
+
+    public function activity_progress()
+    {
+    }
+
+    /**
+     * SEND FROM Client
+     */
+
+    public function start_job()
+    {
+    }
+
+    public function cancel_job()
+    {
+    }
+
+    public function cancel_activity()
+    {
+    }
+
+    public function get_job_list()
+    {
+    }
+
+    public function get_job_status()
+    {
+    }
+
+    public function get_activity_status()
+    {
     }
 }
