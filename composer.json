@@ -4,8 +4,10 @@
     "keywords": ["Amazon","Sport Archive","SQS","AWS","SA","CloudTranscode","Cloud Transcode"],
     "homepage": "https://github.com/sportarchive/CloudTranscodeComSDK",
     "authors": [
-	"name": "Nicolas Menciere",
-	"email": "nmenciere@sportarchive.tv"
+	{
+	    "name": "Nicolas Menciere",
+	    "email": "nmenciere@sportarchive.tv"
+	}
     ],
     "require": {
         "aws/aws-sdk-php": "2.*"
