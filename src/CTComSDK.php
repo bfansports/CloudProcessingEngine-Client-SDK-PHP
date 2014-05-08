@@ -205,6 +205,10 @@ class CTComSDK
     {
     }
 
+    public function job_completed()
+    {
+    }
+
     public function job_failed()
     {
     }
@@ -217,11 +221,19 @@ class CTComSDK
     {
     }
 
+    public function job_terminated()
+    {
+    }
+
     public function activity_scheduled()
     {
     }
 
     public function activity_started()
+    {
+    }
+
+    public function activity_completed()
     {
     }
 
