@@ -1,6 +1,8 @@
 <?php
 
-require __DIR__ . "/../vendor/autoload.php";
+namespace SA;
+
+require __DIR__ . "/../../vendor/autoload.php";
 
 // Amazon libraries
 use Aws\Common\Aws;
