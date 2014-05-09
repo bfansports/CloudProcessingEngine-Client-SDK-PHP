@@ -18,6 +18,9 @@ class CTComSDK
 
     const ROLE_DURATION = 3600;
 
+    // Msg Types
+    const JOB_STARTED = "JOB_STARTED";
+
     function __construct($key = false, $secret = false, $region = false, $debug = false)
     {
         if (!$key)
@@ -201,8 +204,25 @@ class CTComSDK
     {
     }
 
-    public function job_started()
+    public function job_started($workflowInput, $workflowExecution)
     {
+        if (!$this->validate_workflow_input($workflowInput))
+            return false;
+
+        $job_id = $workflowInput->{"job_id"};
+        $client = $workflowInput->{"client"};
+        
+        $msg = $this->craft_new_msg(
+            self::JOB_STARTED,
+            array(
+                'job_id' => $workflowInput->{'job_id'}
+            )
+        );
+
+        $this->sqs->sendMessage(array(
+                'QueueUrl'    => $client->{'queues'}->{'output'},
+                'MessageBody' => $msg,
+            ));
     }
 
     public function job_completed()
@@ -259,6 +279,7 @@ class CTComSDK
 
     public function start_job()
     {
+        // Return Job ID
     }
 
     public function cancel_job()
@@ -279,5 +300,35 @@ class CTComSDK
 
     public function get_activity_status()
     {
+    }
+
+    /**
+     * UTILS
+     */
+
+    private function craft_new_msg($type, $body)
+    {
+        $msg = array(
+            'time' => time(),
+            'type' => $type,
+            'body' => $body
+        );
+
+        return $msg;
+    }
+
+    private function validate_workflow_input($input)
+    {
+        if (!isset($workflowInput->{"client"}))
+        {
+            $this->log_out("ERROR", "No 'client' provided in job input!");
+            return false;
+        }
+        if (!isset($workflowInput->{"job_id"}))
+        {
+            $this->log_out("ERROR", "No 'job_id' provided in job input!");
+            return false;
+        }
+        return true;
     }
 }
