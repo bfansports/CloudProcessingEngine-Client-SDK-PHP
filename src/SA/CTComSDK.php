@@ -60,16 +60,11 @@ class CTComSDK
         if (!$client) {
             if (!$this->sqs) 
             {
-                try {
-                    if ($this->debug)
-                        $this->log_out("DEBUG", "Using execution credentials for SQS");
-                    $this->sqs = $this->aws->get('Sqs');
-                } catch (\Aws\Sqs\Exception\SqsException $e) {
-                    $this->log_out("ERROR", $e->getMessage());
-                    return false;
-                }
-            }
-            return true;
+                if ($this->debug)
+                    $this->log_out("DEBUG", "Using local AWS credentials for SQS");
+                $this->sqs = $this->aws->get('Sqs');
+            }             
+            return;
         }
 
         // Test if we need to renew tmp credentials
@@ -82,50 +77,40 @@ class CTComSDK
             if ($time - time() > 300) {
                 if ($this->debug)
                     $this->log_out("DEBUG", "Credentials still valid!");
-                return true;
+                return;
             }
         }
          
         // Get new TMP credentials using AWS STS service
-        try {
-            $role       = $client["role"];
-            $externalId = $client["externalId"];
-            $assume = array(
-                'RoleArn'         => $role,
-                'RoleSessionName' => time()."-".$client["name"],
-                'DurationSeconds' => self::ROLE_DURATION
-            );
-            if ($externalId && $externalId != "")
-                $assume['ExternalId'] = $externalId;
+        $role       = $client["role"];
+        $externalId = $client["externalId"];
+        $assume = array(
+            'RoleArn'         => $role,
+            'RoleSessionName' => time()."-".$client["name"],
+            'DurationSeconds' => self::ROLE_DURATION
+        );
+        if ($externalId && $externalId != "")
+            $assume['ExternalId'] = $externalId;
             
-            if ($this->debug)
-                $this->log_out("DEBUG", "Getting new temporary credentials from SQS.");
+        if ($this->debug)
+            $this->log_out("DEBUG", "Getting new temporary credentials from SQS.");
 
-            // Get TMP credentials
-            $this->assumedRole = $this->sts->assumeRole($assume);
-        } catch (\Aws\Sts\Exception\StsException $e) {
-            $this->log_out("ERROR", $e->getMessage());
-            return false;
-        }
+        // Get TMP credentials
+        $this->assumedRole = $this->sts->assumeRole($assume);
         
-        try {
-            $this->credentials = 
-                $this->sts->createCredentials($this->assumedRole);
+        $this->credentials = 
+            $this->sts->createCredentials($this->assumedRole);
 
-            if ($this->debug)
-                $this->log_out("DEBUG", "Creating SQS client using temporary credentials!");
+        if ($this->debug)
+            $this->log_out("DEBUG", "Creating SQS client using temporary credentials!");
             
-            // Create SQS Client using new credentials
-            $this->sqs = Sqs\SqsClient::factory(array(
-                    'credentials' => $this->credentials,
-                    'region'      => $this->region
-                ));
-        } catch (\Aws\Sqs\Exception\SqsException $e) {
-            $this->log_out("ERROR", $e->getMessage());
-            return false;
-        }
+        // Create SQS Client using new credentials
+        $this->sqs = Sqs\SqsClient::factory(array(
+                'credentials' => $this->credentials,
+                'region'      => $this->region
+            ));
         
-        return true;
+        return;
     }
     
     /**
@@ -136,31 +121,23 @@ class CTComSDK
     public function receive_message($client, $queue, $timeout)
     {
         // Init SQS client
-        if (!$this->init_sqs_client($client))
-            return false;
+        $this->init_sqs_client($client);
  
-        try {
-            if ($this->debug)
-                $this->log_out(
-                    "INFO", 
-                    "Polling from '$queue' ..."
-                );
+        if ($this->debug)
+            $this->log_out(
+                "INFO", 
+                "Polling from '$queue' ..."
+            );
             
-            // Poll from SQS to check for new message 
-            $result = $this->sqs->receiveMessage(array(
-                    'QueueUrl'        => $queue,
-                    'WaitTimeSeconds' => $timeout,
-                ));
-        }
-        catch (\Aws\Sqs\Exception\SqsException $e) {
-            $this->log_out("ERROR", $e->getMessage());
-            sleep($timeout);
-            return false;
-        }
+        // Poll from SQS to check for new message 
+        $result = $this->sqs->receiveMessage(array(
+                'QueueUrl'        => $queue,
+                'WaitTimeSeconds' => $timeout,
+            ));
         
         // Get the message if any and return it to the caller
         if (($messages = $result->get('Messages')) &&
-            count($message))
+            count($messages))
         {
             if ($this->debug)
                 $this->log_out(
@@ -176,17 +153,11 @@ class CTComSDK
     public function delete_message($client, $queue, $msg)
     {
         // Init SQS client
-        if (!$this->init_sqs_client($client))
-            return false;
+        $this->init_sqs_client($client);
         
-        try {
-            $this->sqs->deleteMessage(array(
-                    'QueueUrl'        => $queue,
-                    'ReceiptHandle'   => $msg['ReceiptHandle']));
-        } catch (\Aws\Sqs\Exception\SqsException $e) {
-            $this->log_out("ERROR", $e->getMessage());
-            return false;
-        }
+        $this->sqs->deleteMessage(array(
+                'QueueUrl'        => $queue,
+                'ReceiptHandle'   => $msg['ReceiptHandle']));
         
         return true;
     }
@@ -206,22 +177,26 @@ class CTComSDK
 
     public function job_started($workflowInput, $workflowExecution)
     {
-        if (!$this->validate_workflow_input($workflowInput))
-            return false;
+        $decoded = $this->validate_workflow_input($workflowInput);
 
-        $job_id = $workflowInput->{"job_id"};
-        $client = $workflowInput->{"client"};
+        // Init SQS client
+        $this->init_sqs_client(false);
+
+        $job_id = $decoded->{"job_id"};
+        $client = $decoded->{"client"};
         
         $msg = $this->craft_new_msg(
             self::JOB_STARTED,
             array(
-                'job_id' => $workflowInput->{'job_id'}
+                'job_id'     => $decoded->{'job_id'},
+                'runId'      => $workflowExecution['runId'],
+                'workflowId' => $workflowExecution['workflowId'],
             )
         );
 
         $this->sqs->sendMessage(array(
                 'QueueUrl'    => $client->{'queues'}->{'output'},
-                'MessageBody' => $msg,
+                'MessageBody' => json_encode($msg),
             ));
     }
 
@@ -319,16 +294,14 @@ class CTComSDK
 
     private function validate_workflow_input($input)
     {
-        if (!isset($workflowInput->{"client"}))
-        {
-            $this->log_out("ERROR", "No 'client' provided in job input!");
-            return false;
-        }
-        if (!isset($workflowInput->{"job_id"}))
-        {
-            $this->log_out("ERROR", "No 'job_id' provided in job input!");
-            return false;
-        }
-        return true;
+        if (!($decoded = json_decode($input)))
+            throw new \Exception("Workflow JSON input invalid!");
+        
+        if (!isset($decoded->{"client"}))
+            throw new \Exception("No 'client' provided in job input!");
+        if (!isset($decoded->{"job_id"}))
+            throw new \Exception( "No 'job_id' provided in job input!");
+        
+        return ($decoded);
     }
 }
