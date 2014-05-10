@@ -19,7 +19,8 @@ class CTComSDK
     const ROLE_DURATION = 3600;
 
     // Msg Types
-    const JOB_STARTED = "JOB_STARTED";
+    const JOB_STARTED        = "JOB_STARTED";
+    const ACTIVITY_SCHEDULED = "ACTIVITY_SCHEDULED";
 
     function __construct($key = false, $secret = false, $region = false, $debug = false)
     {
@@ -175,7 +176,7 @@ class CTComSDK
     {
     }
 
-    public function job_started($workflowInput, $workflowExecution)
+    public function job_started($workflowExecution, $workflowInput)
     {
         $decoded = $this->validate_workflow_input($workflowInput);
 
@@ -202,6 +203,7 @@ class CTComSDK
 
     public function job_completed()
     {
+        
     }
 
     public function job_failed()
@@ -220,8 +222,30 @@ class CTComSDK
     {
     }
 
-    public function activity_scheduled()
+    public function activity_scheduled($workflowExecution, $workflowInput, $activity)
     {
+        $decoded = $this->validate_workflow_input($workflowInput);
+
+        // Init SQS client
+        $this->init_sqs_client(false);
+
+        $job_id = $decoded->{"job_id"};
+        $client = $decoded->{"client"};
+        
+        $msg = $this->craft_new_msg(
+            self::ACTIVITY_SCHEDULED,
+            array(
+                'job_id'     => $decoded->{'job_id'},
+                'runId'      => $workflowExecution['runId'],
+                'workflowId' => $workflowExecution['workflowId'],
+                'activity'   => $activity
+            )
+        );
+
+        $this->sqs->sendMessage(array(
+                'QueueUrl'    => $client->{'queues'}->{'output'},
+                'MessageBody' => json_encode($msg),
+            ));
     }
 
     public function activity_started()
