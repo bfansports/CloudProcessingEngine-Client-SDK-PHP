@@ -19,6 +19,7 @@ class CTComSDK
     const ROLE_DURATION = 3600;
 
     // Msg Types
+    const START_JOB          = "START_JOB";
     const JOB_STARTED        = "JOB_STARTED";
     const ACTIVITY_SCHEDULED = "ACTIVITY_SCHEDULED";
     const ACTIVITY_STARTED   = "ACTIVITY_STARTED";
@@ -86,12 +87,12 @@ class CTComSDK
             }
         }
          
-        // Get new TMP credentials using AWS STS service
-        $role       = $client["role"];
-        $externalId = $client["externalId"];
+        // Get new TMP credentials for client using AWS STS service
+        $role       = $client->{"role"};
+        $externalId = $client->{"externalId"};
         $assume = array(
             'RoleArn'         => $role,
-            'RoleSessionName' => time()."-".$client["name"],
+            'RoleSessionName' => time()."-".$client->{"name"},
             'DurationSeconds' => self::ROLE_DURATION
         );
         if ($externalId && $externalId != "")
@@ -283,9 +284,33 @@ class CTComSDK
      * SEND FROM Client
      */
 
-    public function start_job()
+    public function start_job($client, $input)
     {
-        // Return Job ID
+        if (!$client)
+            throw new \Exception("You must provide 'client' JSON identification!");
+        if (!$input)
+            throw new \Exception("You must provide a JSON 'input' to start a new job!");
+        
+        if (!($decodedClient = json_decode($client)))
+            throw new \Exception("Invalid JSON 'client' to start new job!");
+        if (!($decodedInput  = json_decode($input)))
+            throw new \Exception("Invalid JSON 'input' to start new job!");
+        
+        $this->validate_client($decodedClient);
+        
+        // Init SQS client
+        $this->init_sqs_client($decodedClient);
+        
+        $job_id = md5($client->{'name'} . uniqid('',true));
+        $msg = $this->craft_new_msg(
+            self::START_JOB,
+            array(
+                'job_id' => $job_id,
+                'data'   => $input
+            )
+        );
+
+        return ($job_id);
     }
 
     public function cancel_job()
@@ -325,8 +350,11 @@ class CTComSDK
         return $msg;
     }
 
-    private function send_activity_message($workflowExecution, 
-        $workflowInput, $activity, $status)
+    private function send_activity_message(
+        $workflowExecution, 
+        $workflowInput, 
+        $activity, 
+        $type)
     {
         $this->validate_workflow_input($workflowInput);
 
@@ -337,7 +365,7 @@ class CTComSDK
         $client = $workflowInput->{"client"};
         
         $msg = $this->craft_new_msg(
-            $status,
+            $type,
             array(
                 'job_id'     => $workflowInput->{'job_id'},
                 'runId'      => $workflowExecution['runId'],
@@ -358,5 +386,21 @@ class CTComSDK
             throw new \Exception("No 'client' provided in job input!");
         if (!isset($input->{"job_id"}))
             throw new \Exception("No 'job_id' provided in job input!");
+        if (!isset($input->{"data"}))
+            throw new \Exception("No 'data' provided in job input!");
+    }
+    
+    private function validate_client($client)
+    {
+        if (!isset($client->{"name"}))
+            throw new \Exception("'client' has no 'name'!");
+        if (!isset($client->{"role"}))
+            throw new \Exception("'client' has no 'role'!");
+        if (!isset($client->{"queues"}))
+            throw new \Exception("'client' has no 'queues'!");
+        if (!isset($client->{"queues"}->{'input'}))
+            throw new \Exception("'client' has no 'input' queue!");
+        if (!isset($client->{"queues"}->{'output'}))
+            throw new \Exception("'client' has no 'output' queue !");
     }
 }
