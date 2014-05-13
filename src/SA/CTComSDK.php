@@ -26,6 +26,7 @@ class CTComSDK
     const ACTIVITY_FAILED    = "ACTIVITY_FAILED";
     const ACTIVITY_TIMEOUT   = "ACTIVITY_TIMEOUT";
     const ACTIVITY_COMPLETED = "ACTIVITY_COMPLETED";
+    const ACTIVITY_PROGRESS  = "ACTIVITY_PROGRESS";
 
     function __construct($key = false, $secret = false, $region = false, $debug = false)
     {
@@ -181,8 +182,9 @@ class CTComSDK
     {
     }
 
-    public function job_started($workflowExecution, $workflowInput)
+    public function job_started($newWorkflow)
     {
+        $workflowInput = $newWorkflow["input"];
         $this->validate_workflow_input($workflowInput);
 
         // Init SQS client
@@ -193,10 +195,9 @@ class CTComSDK
         
         $msg = $this->craft_new_msg(
             self::JOB_STARTED,
+            $workflowInput->{'job_id'},
             array(
-                'job_id'     => $workflowInput->{'job_id'},
-                'runId'      => $workflowExecution['runId'],
-                'workflowId' => $workflowExecution['workflowId'],
+                'workflow' => $newWorkflow
             )
         );
 
@@ -238,7 +239,7 @@ class CTComSDK
 
     public function activity_started($workflowExecution, $workflowInput, $activity)
     {
-         $this->send_activity_message(
+        $this->send_activity_message(
             $workflowExecution, 
             $workflowInput, 
             $activity, 
@@ -276,8 +277,35 @@ class CTComSDK
     {
     }
 
-    public function activity_progress()
+    public function activity_progress($task, $progress)
     {
+        // Init SQS client
+        $this->init_sqs_client(false);
+
+        if (!($input = json_decode($task->get('input'))))
+            throw new \Exception("Task input JSON is invalid!");
+        $job_id = $input->{"job_id"};
+        $client = $input->{"client"};
+        
+        $activity = [
+            'activityId'   => $task->get('activityId'),
+            'activityType' => $task->get('activityType')
+        ];
+
+        $msg = $this->craft_new_msg(
+            self::ACTIVITY_PROGRESS,
+            $job_id->{'job_id'},
+            array(
+                'workflow' => $task->get('workflowExecution'),
+                'activity' => $activity,
+                'progress' => $progress
+            )
+        );
+
+        $this->sqs->sendMessage(array(
+                'QueueUrl'    => $client->{'queues'}->{'output'},
+                'MessageBody' => json_encode($msg),
+            ));
     }
 
     /**
@@ -291,24 +319,25 @@ class CTComSDK
         if (!$input)
             throw new \Exception("You must provide a JSON 'input' to start a new job!");
         
-        if (!($decodedClient = json_decode($client)))
-            throw new \Exception("Invalid JSON 'client' to start new job!");
         if (!($decodedInput  = json_decode($input)))
             throw new \Exception("Invalid JSON 'input' to start new job!");
         
-        $this->validate_client($decodedClient);
+        $this->validate_client($client);
         
         // Init SQS client
-        $this->init_sqs_client($decodedClient);
+        $this->init_sqs_client($client);
         
         $job_id = md5($client->{'name'} . uniqid('',true));
         $msg = $this->craft_new_msg(
             self::START_JOB,
-            array(
-                'job_id' => $job_id,
-                'data'   => $input
-            )
+            $job_id,
+            $decodedInput
         );
+
+        $this->sqs->sendMessage(array(
+                'QueueUrl'    => $client->{'queues'}->{'input'},
+                'MessageBody' => json_encode($msg),
+            ));
 
         return ($job_id);
     }
@@ -339,12 +368,13 @@ class CTComSDK
      * UTILS
      */
 
-    private function craft_new_msg($type, $body)
+    private function craft_new_msg($type, $jobId, $data)
     {
         $msg = array(
-            'time' => time(),
-            'type' => $type,
-            'body' => $body
+            'time'   => time(),
+            'type'   => $type,
+            'job_id' => $jobId,
+            'data'   => $data
         );
 
         return $msg;
@@ -366,11 +396,10 @@ class CTComSDK
         
         $msg = $this->craft_new_msg(
             $type,
+            $job_id,
             array(
-                'job_id'     => $workflowInput->{'job_id'},
-                'runId'      => $workflowExecution['runId'],
-                'workflowId' => $workflowExecution['workflowId'],
-                'activity'   => $activity
+                'workflow' => $workflowExecution,
+                'activity' => $activity
             )
         );
 
