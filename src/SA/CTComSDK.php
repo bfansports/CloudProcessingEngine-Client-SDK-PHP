@@ -27,6 +27,8 @@ class CTComSDK
     const ACTIVITY_TIMEOUT   = "ACTIVITY_TIMEOUT";
     const ACTIVITY_COMPLETED = "ACTIVITY_COMPLETED";
     const ACTIVITY_PROGRESS  = "ACTIVITY_PROGRESS";
+    const ACTIVITY_PREPARING = "ACTIVITY_PREPARING";
+    const ACTIVITY_FINISHING = "ACTIVITY_FINISHING";
 
     function __construct($key = false, $secret = false, $region = false, $debug = false)
     {
@@ -132,7 +134,7 @@ class CTComSDK
  
         if ($this->debug)
             $this->log_out(
-                "INFO", 
+                "DEBUG", 
                 "Polling from '$queue' ..."
             );
             
@@ -148,7 +150,7 @@ class CTComSDK
         {
             if ($this->debug)
                 $this->log_out(
-                    "INFO", 
+                    "DEBUG", 
                     "New messages recieved in queue: '$queue'"
                 );
             
@@ -182,9 +184,8 @@ class CTComSDK
     {
     }
 
-    public function job_started($newWorkflow)
+    public function job_started($workflowExecution, $workflowInput)
     {
-        $workflowInput = $newWorkflow["input"];
         $this->validate_workflow_input($workflowInput);
 
         // Init SQS client
@@ -197,7 +198,7 @@ class CTComSDK
             self::JOB_STARTED,
             $workflowInput->{'job_id'},
             array(
-                'workflow' => $newWorkflow
+                'workflow' => $workflowExecution
             )
         );
 
@@ -230,47 +231,52 @@ class CTComSDK
 
     public function activity_scheduled($workflowExecution, $workflowInput, $activity)
     {
-        $this->send_activity_message(
+        $this->send_activity_status(
             $workflowExecution, 
             $workflowInput, 
             $activity, 
-            self::ACTIVITY_SCHEDULED);
+            self::ACTIVITY_SCHEDULED
+        );
     }
 
     public function activity_started($workflowExecution, $workflowInput, $activity)
     {
-        $this->send_activity_message(
+        $this->send_activity_status(
             $workflowExecution, 
             $workflowInput, 
             $activity, 
-            self::ACTIVITY_STARTED);
+            self::ACTIVITY_STARTED
+        );
     }
 
     public function activity_completed($workflowExecution, $workflowInput, $activity)
     {
-        $this->send_activity_message(
+        $this->send_activity_status(
             $workflowExecution, 
             $workflowInput, 
             $activity, 
-            self::ACTIVITY_COMPLETED);
+            self::ACTIVITY_COMPLETED
+        );
     }
 
     public function activity_failed($workflowExecution, $workflowInput, $activity)
     {
-        $this->send_activity_message(
+        $this->send_activity_status(
             $workflowExecution, 
             $workflowInput, 
             $activity, 
-            self::ACTIVITY_FAILED);
+            self::ACTIVITY_FAILED
+        );
     }
 
     public function activity_timeout($workflowExecution, $workflowInput, $activity)
     {
-        $this->send_activity_message(
+        $this->send_activity_status(
             $workflowExecution, 
             $workflowInput, 
             $activity, 
-            self::ACTIVITY_TIMEOUT);
+            self::ACTIVITY_TIMEOUT
+        );
     }
 
     public function activity_canceled()
@@ -279,33 +285,29 @@ class CTComSDK
 
     public function activity_progress($task, $progress)
     {
-        // Init SQS client
-        $this->init_sqs_client(false);
-
-        if (!($input = json_decode($task->get('input'))))
-            throw new \Exception("Task input JSON is invalid!");
-        $job_id = $input->{"job_id"};
-        $client = $input->{"client"};
-        
-        $activity = [
-            'activityId'   => $task->get('activityId'),
-            'activityType' => $task->get('activityType')
-        ];
-
-        $msg = $this->craft_new_msg(
-            self::ACTIVITY_PROGRESS,
-            $job_id->{'job_id'},
-            array(
-                'workflow' => $task->get('workflowExecution'),
-                'activity' => $activity,
-                'progress' => $progress
-            )
+        $this->send_activity_updates(
+            $task, 
+            self::ACTIVITY_PROGRESS, 
+            $progress
         );
+    }
 
-        $this->sqs->sendMessage(array(
-                'QueueUrl'    => $client->{'queues'}->{'output'},
-                'MessageBody' => json_encode($msg),
-            ));
+    public function activity_preparing($task)
+    {
+        $this->send_activity_updates(
+            $task, 
+            self::ACTIVITY_PREPARING, 
+            false
+        );
+    }
+
+    public function activity_finishing($task)
+    {
+        $this->send_activity_updates(
+            $task, 
+            self::ACTIVITY_FINISHING, 
+            false
+        );
     }
 
     /**
@@ -364,6 +366,7 @@ class CTComSDK
 
 
     
+
     /**
      * UTILS
      */
@@ -371,7 +374,7 @@ class CTComSDK
     private function craft_new_msg($type, $jobId, $data)
     {
         $msg = array(
-            'time'   => time(),
+            'time'   => microtime(true),
             'type'   => $type,
             'job_id' => $jobId,
             'data'   => $data
@@ -380,7 +383,7 @@ class CTComSDK
         return $msg;
     }
 
-    private function send_activity_message(
+    private function send_activity_status(
         $workflowExecution, 
         $workflowInput, 
         $activity, 
@@ -408,6 +411,45 @@ class CTComSDK
                 'MessageBody' => json_encode($msg),
             ));
     }
+
+    private function send_activity_updates($task, $type, $extra)
+    {
+        // Init SQS client
+        $this->init_sqs_client(false);
+
+        if (!($input = json_decode($task->get('input'))))
+            throw new \Exception("Task input JSON is invalid!");
+        $job_id = $input->{"job_id"};
+        $client = $input->{"client"};
+        
+        $activity = [
+            'activityId'   => $task->get('activityId'),
+            'activityType' => $task->get('activityType')
+        ];
+
+        // Prepare data to be send out to client
+        $data = array(
+            'workflow' => $task->get('workflowExecution'),
+            'activity' => $activity
+        );
+        
+        // Add extra data to $data
+        if ($extra && is_array($extra) && count($extra))
+            foreach ($extra as $key => $value)
+                $data[$key] = $value;
+        
+        $msg = $this->craft_new_msg(
+            $type,
+            $job_id,
+            $data
+        );
+
+        $this->sqs->sendMessage(array(
+                'QueueUrl'    => $client->{'queues'}->{'output'},
+                'MessageBody' => json_encode($msg),
+            ));
+    }
+
 
     private function validate_workflow_input($input)
     {
