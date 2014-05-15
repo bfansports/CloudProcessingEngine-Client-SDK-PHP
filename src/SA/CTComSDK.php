@@ -17,11 +17,16 @@ class CTComSDK
     private $assumedRole;
 
     const ROLE_DURATION = 3600;
+    
+    // Known Activities
+    const VALIDATE_INPUT   = "ValidateInputAndAsset";
+    const TRANSCODE_ASSET  = "TranscodeAsset";
 
     // Msg Types
     const START_JOB          = "START_JOB";
     const JOB_STARTED        = "JOB_STARTED";
-    const ACTIVITY_SCHEDULED = "ACTIVITY_SCHEDULED";
+    const JOB_COMPLETED      = "JOB_COMPLETED";
+    const JOB_FAILED         = "JOB_FAILED";
     const ACTIVITY_STARTED   = "ACTIVITY_STARTED";
     const ACTIVITY_FAILED    = "ACTIVITY_FAILED";
     const ACTIVITY_TIMEOUT   = "ACTIVITY_TIMEOUT";
@@ -186,35 +191,35 @@ class CTComSDK
 
     public function job_started($workflowExecution, $workflowInput)
     {
-        $this->validate_workflow_input($workflowInput);
-
-        // Init SQS client
-        $this->init_sqs_client(false);
-
-        $job_id = $workflowInput->{"job_id"};
-        $client = $workflowInput->{"client"};
-        
-        $msg = $this->craft_new_msg(
+        $this->send_job_updates(
+            $workflowExecution,
+            $workflowInput,
             self::JOB_STARTED,
-            $workflowInput->{'job_id'},
-            array(
-                'workflow' => $workflowExecution
-            )
+            true
         );
-
-        $this->sqs->sendMessage(array(
-                'QueueUrl'    => $client->{'queues'}->{'output'},
-                'MessageBody' => json_encode($msg),
-            ));
     }
 
-    public function job_completed()
+    public function job_completed($workflowExecution, $workflowInput)
     {
-        
+        $this->send_job_updates(
+            $workflowExecution,
+            $workflowInput,
+            self::JOB_COMPLETED
+        );
     }
 
-    public function job_failed()
+    public function job_failed($workflowExecution, $workflowInput, $reason, $details)
     {
+        $this->send_job_updates(
+            $workflowExecution,
+            $workflowInput,
+            self::JOB_FAILED,
+            false,
+            [
+                "reason"  => $reason,
+                "details" => $details
+            ]
+        );
     }
 
     public function job_timeout()
@@ -225,58 +230,65 @@ class CTComSDK
     {
     }
 
-    public function job_terminated()
+    public function activity_started($task)
     {
-    }
-
-    public function activity_scheduled($workflowExecution, $workflowInput, $activity)
-    {
-        $this->send_activity_status(
-            $workflowExecution, 
-            $workflowInput, 
-            $activity, 
-            self::ACTIVITY_SCHEDULED
+        // last param to 'true' to force sending 'input' info back to client
+        $this->send_activity_updates(
+            $task, 
+            self::ACTIVITY_STARTED,
+            true
         );
     }
 
-    public function activity_started($workflowExecution, $workflowInput, $activity)
+    public function activity_completed($task)
     {
-        $this->send_activity_status(
-            $workflowExecution, 
-            $workflowInput, 
-            $activity, 
-            self::ACTIVITY_STARTED
-        );
-    }
-
-    public function activity_completed($workflowExecution, $workflowInput, $activity)
-    {
-        $this->send_activity_status(
-            $workflowExecution, 
-            $workflowInput, 
-            $activity, 
+        $this->send_activity_updates(
+            $task, 
             self::ACTIVITY_COMPLETED
         );
     }
 
-    public function activity_failed($workflowExecution, $workflowInput, $activity)
+    public function activity_failed($task, $reason, $details)
     {
-        $this->send_activity_status(
-            $workflowExecution, 
-            $workflowInput, 
-            $activity, 
-            self::ACTIVITY_FAILED
+        $this->send_activity_updates(
+            $task, 
+            self::ACTIVITY_FAILED,
+            false,
+            [
+                "reason"  => $reason,
+                "details" => $details
+            ]
         );
     }
 
     public function activity_timeout($workflowExecution, $workflowInput, $activity)
     {
-        $this->send_activity_status(
-            $workflowExecution, 
-            $workflowInput, 
-            $activity, 
-            self::ACTIVITY_TIMEOUT
+        $this->validate_workflow_input($workflowInput);
+
+        // Init SQS client
+        $this->init_sqs_client(false);
+
+        $job_id = $workflowInput->{"job_id"};
+        $client = $workflowInput->{"client"};
+        
+        $activityData = [
+            'activityId'   => $activity["activityId"],
+            'activityType' => $activity["activityType"]
+        ];
+        
+        $msg = $this->craft_new_msg(
+            self::ACTIVITY_TIMEOUT,
+            $job_id,
+            array(
+                'workflow' => $workflowExecution,
+                'activity' => $activity
+            )
         );
+
+        $this->sqs->sendMessage(array(
+                'QueueUrl'    => $client->{'queues'}->{'output'},
+                'MessageBody' => json_encode($msg),
+            ));
     }
 
     public function activity_canceled()
@@ -288,6 +300,7 @@ class CTComSDK
         $this->send_activity_updates(
             $task, 
             self::ACTIVITY_PROGRESS, 
+            false,
             $progress
         );
     }
@@ -296,8 +309,7 @@ class CTComSDK
     {
         $this->send_activity_updates(
             $task, 
-            self::ACTIVITY_PREPARING, 
-            false
+            self::ACTIVITY_PREPARING
         );
     }
 
@@ -305,8 +317,7 @@ class CTComSDK
     {
         $this->send_activity_updates(
             $task, 
-            self::ACTIVITY_FINISHING, 
-            false
+            self::ACTIVITY_FINISHING
         );
     }
 
@@ -383,36 +394,11 @@ class CTComSDK
         return $msg;
     }
 
-    private function send_activity_status(
-        $workflowExecution, 
-        $workflowInput, 
-        $activity, 
-        $type)
-    {
-        $this->validate_workflow_input($workflowInput);
-
-        // Init SQS client
-        $this->init_sqs_client(false);
-
-        $job_id = $workflowInput->{"job_id"};
-        $client = $workflowInput->{"client"};
-        
-        $msg = $this->craft_new_msg(
-            $type,
-            $job_id,
-            array(
-                'workflow' => $workflowExecution,
-                'activity' => $activity
-            )
-        );
-
-        $this->sqs->sendMessage(array(
-                'QueueUrl'    => $client->{'queues'}->{'output'},
-                'MessageBody' => json_encode($msg),
-            ));
-    }
-
-    private function send_activity_updates($task, $type, $extra)
+    private function send_activity_updates(
+        $task, 
+        $type, 
+        $sendInput = false, 
+        $extra = false)
     {
         // Init SQS client
         $this->init_sqs_client(false);
@@ -422,21 +408,37 @@ class CTComSDK
         $job_id = $input->{"job_id"};
         $client = $input->{"client"};
         
+        $activityType = $task->get('activityType');
         $activity = [
             'activityId'   => $task->get('activityId'),
-            'activityType' => $task->get('activityType')
+            'activityType' => $activityType
         ];
-
+        
+        // Include TASK input information
+        // We know two task types. We format the 'input' object differently
+        // based on the task type.
+        if ($sendInput)
+        {
+            if ($activityType["name"] == self::VALIDATE_INPUT)
+                $activity['input'] = $input->{"data"};
+            else if ($activityType["name"] == self::TRANSCODE_ASSET)
+            {
+                $activity['input']['input_asset_type'] = $input->{"input_asset_type"};
+                $activity['input']['input_asset_info'] = $input->{"input_asset_info"};
+                $activity['input']['output'] = $input->{"output"};
+            }
+        }
+        
+        // Add extra data to $data
+        if ($extra && is_array($extra) && count($extra))
+            foreach ($extra as $key => $value)
+                $activity[$key] = $value;
+        
         // Prepare data to be send out to client
         $data = array(
             'workflow' => $task->get('workflowExecution'),
             'activity' => $activity
         );
-        
-        // Add extra data to $data
-        if ($extra && is_array($extra) && count($extra))
-            foreach ($extra as $key => $value)
-                $data[$key] = $value;
         
         $msg = $this->craft_new_msg(
             $type,
@@ -450,7 +452,44 @@ class CTComSDK
             ));
     }
 
+    private function send_job_updates(
+        $workflowExecution, 
+        $workflowInput, 
+        $type, 
+        $sendInput = false, 
+        $extra = false)
+    {
+        $this->validate_workflow_input($workflowInput);
 
+        // Init SQS client
+        $this->init_sqs_client(false);
+
+        $job_id = $workflowInput->{"job_id"};
+        $client = $workflowInput->{"client"};
+
+        if ($sendInput)
+            $workflowExecution['input'] = $workflowInput->{"data"};
+        
+        $data = array(
+            'workflow' => $workflowExecution,
+        );
+        
+        if ($extra && is_array($extra) && count($extra))
+            foreach ($extra as $key => $value)
+                $data[$key] = $value;
+        
+        $msg = $this->craft_new_msg(
+            $type,
+            $workflowInput->{'job_id'},
+            $data
+        );
+
+        $this->sqs->sendMessage(array(
+                'QueueUrl'    => $client->{'queues'}->{'output'},
+                'MessageBody' => json_encode($msg),
+            ));
+    }
+    
     private function validate_workflow_input($input)
     {
         if (!isset($input->{"client"}))
