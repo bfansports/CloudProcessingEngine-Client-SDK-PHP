@@ -15,8 +15,8 @@ class CTComSDK
     private $sts;
     
     // Known Activities
-    const VALIDATE_INPUT   = "ValidateInputAndAsset";
-    const TRANSCODE_ASSET  = "TranscodeAsset";
+    const VALIDATE_INPUT     = "ValidateInputAndAsset";
+    const TRANSCODE_ASSET    = "TranscodeAsset";
 
     // Msg Types
     const START_JOB          = "START_JOB";
@@ -35,13 +35,13 @@ class CTComSDK
     {
         if (!$key)
             if (!($key    = getenv("AWS_ACCESS_KEY_ID")))
-                throw new Exception("Provide AWS 'key'!");
+                throw new Exception("Set 'AWS_ACCESS_KEY_ID' environment variable!");
         if (!$secret)
             if (!($secret = getenv("AWS_SECRET_KEY")))
-                throw new Exception("Provide AWS 'secret'!");
+                throw new Exception("Set 'AWS_SECRET_KEY' environment variable!");
         if (!$region)
             if (!($region = getenv("AWS_REGION")))
-                throw new Exception("Provide AWS 'region'!");
+                throw new Exception("Set 'AWS_REGION' environment variable!");
         
         $this->region = $region;
         $this->debug  = $debug;
@@ -258,22 +258,22 @@ class CTComSDK
         if (!$input)
             throw new \Exception("You must provide a JSON 'input' to start a new job!");
         
+        if (!($decodedClient = json_decode($client)))
+            throw new \Exception("Invalid JSON 'client' to start new job!");
         if (!($decodedInput = json_decode($input)))
             throw new \Exception("Invalid JSON 'input' to start new job!");
         
-        $this->validate_client($client);
+        $this->validate_client($decodedClient);
         
-        $job_id = md5($client->{'name'} . uniqid('',true));
+        $job_id = md5($decodedClient->{'name'} . uniqid('',true));
         $msg = $this->craft_new_msg(
             self::START_JOB,
             $job_id,
             $decodedInput
         );
-
-        print("SEND MSG!\n");
-
+        
         $this->sqs->sendMessage(array(
-                'QueueUrl'    => $client->{'queues'}->{'input'},
+                'QueueUrl'    => $decodedClient->{'queues'}->{'input'},
                 'MessageBody' => json_encode($msg),
             ));
 
