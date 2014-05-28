@@ -33,23 +33,21 @@ class CTComSDK
 
     function __construct($key = false, $secret = false, $region = false, $debug = false)
     {
-        if (!$key)
-            if (!($key    = getenv("AWS_ACCESS_KEY_ID")))
-                throw new Exception("Set 'AWS_ACCESS_KEY_ID' environment variable!");
-        if (!$secret)
-            if (!($secret = getenv("AWS_SECRET_KEY")))
-                throw new Exception("Set 'AWS_SECRET_KEY' environment variable!");
+        /* if (!$key) */
+        /*     if (!($key    = getenv("AWS_ACCESS_KEY_ID"))) */
+        /*         throw new \Exception("Set 'AWS_ACCESS_KEY_ID' environment variable!"); */
+        /* if (!$secret) */
+        /*     if (!($secret = getenv("AWS_SECRET_KEY"))) */
+        /*         throw new \Exception("Set 'AWS_SECRET_KEY' environment variable!"); */
         if (!$region)
             if (!($region = getenv("AWS_REGION")))
-                throw new Exception("Set 'AWS_REGION' environment variable!");
+                throw new \Exception("Set 'AWS_REGION' environment variable!");
         
         $this->region = $region;
         $this->debug  = $debug;
 
         // Create AWS SDK instance
         $this->aws = Aws::factory(array(
-                'key'    => $key,
-                'secret' => $secret,
                 'region' => $region
             ));
         $this->sts = $this->aws->get('Sts');
