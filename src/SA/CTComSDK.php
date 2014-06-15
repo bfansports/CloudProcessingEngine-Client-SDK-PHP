@@ -40,8 +40,8 @@ class CTComSDK
         /*     if (!($secret = getenv("AWS_SECRET_KEY"))) */
         /*         throw new \Exception("Set 'AWS_SECRET_KEY' environment variable!"); */
         if (!$region)
-            if (!($region = getenv("AWS_DEFAULT_REGION_REGION")))
-                throw new \Exception("Set 'AWS_DEFAULT_REGION_REGION' environment variable!");
+            if (!($region = getenv("AWS_DEFAULT_REGION")))
+                throw new \Exception("Set 'AWS_DEFAULT_REGION' environment variable!");
         
         $this->region = $region;
         $this->debug  = $debug;
