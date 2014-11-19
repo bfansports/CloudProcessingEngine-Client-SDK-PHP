@@ -2,7 +2,7 @@
     "name": "sportarchive/cloud-transcode-com-sdk",
     "description": "SDK to communicate with the Cloud Transcode stack. It interfaces with AWS SQS for communication between the stack and client.",
     "keywords": ["Amazon","Sport Archive","SQS","AWS","SA","CloudTranscode","Cloud Transcode"],
-    "homepage": "https://github.com/sportarchive/CloudTranscodeComSDK ",
+    "homepage": "https://github.com/sportarchive/CloudTranscodeComSDK",
     "authors": [
 	{
 	    "name": "Nicolas Menciere",
