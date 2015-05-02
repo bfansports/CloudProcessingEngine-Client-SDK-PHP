@@ -1,8 +1,8 @@
 {
-    "name": "sportarchive/cloud-transcode-com-sdk",
-    "description": "SDK to communicate with the Cloud Transcode stack. It interfaces with AWS SQS for communication between the stack and client.",
-    "keywords": ["Amazon","Sport Archive","SQS","AWS","SA","CloudTranscode","Cloud Transcode"],
-    "homepage": "https://github.com/sportarchive/CloudTranscodeComSDK",
+    "name": "sportarchive/cloud-transcode-php-sdk",
+    "description": "PHP SDK for the Cloud Transcode project. Allows communication with the Cloud Transcode stack: submit jobs, get transcoding status, etc.",
+    "keywords": ["CloudTranscode","Cloud Transcode"],
+    "homepage": "https://github.com/sportarchive/CloudTranscode-PHP-SDK",
     "authors": [
 	{
 	    "name": "Nicolas Menciere",
