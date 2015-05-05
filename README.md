@@ -1,13 +1,11 @@
 CloudTranscode-PHP-SDK
 ====================
 
-PHP SDK that can be used in your project to communicate with the CloudTranscode stack. 
-
-It provides the interfaces you need to submit new jobs to the stack and listen to updates from the stack.
+PHP implementation of the Cloud Transcode SDK.
 
 # SDK documentation
 
-http://sportarchive.github.io/CloudTranscode-PHP-SDK
+http://sportarchive.github.io/CloudTranscode-SDK/
 
 # Cloud Transcode project
 
