@@ -249,27 +249,29 @@ class CTComSDK
      * SEND FROM Client
      */
 
-    public function start_job($client, $input)
+    public function start_job($client, $input, $job_id = null)
     {
-        if (!$client)
-            throw new \Exception("You must provide 'client' JSON identification!");
-        if (!$input)
-            throw new \Exception("You must provide a JSON 'input' to start a new job!");
-        
-        if (!($decodedClient = json_decode($client)))
-            throw new \Exception("Invalid JSON 'client' to start new job!");
-        if (!($decodedInput = json_decode($input)))
-            throw new \Exception("Invalid JSON 'input' to start new job!");
-        
+        $decodedClient = is_object($client) ? $client : json_decode($client);
+        $decodedInput = is_object($client) ? $client : json_decode($input);
+
+        if (!$decodedClient) {
+            throw new \InvalidArgumentException(
+                "Invalid JSON 'client' to start new job!");
+        }
+        if (!$decodedInput) {
+            throw new \InvalidArgumentException(
+                "Invalid JSON 'input' to start new job!");
+        }
+
         $this->validate_client($decodedClient);
-        
-        $job_id = md5($decodedClient->{'name'} . uniqid('',true));
+
+        $job_id = $job_id ?: md5($decodedClient->{'name'} . uniqid('',true));
         $msg = $this->craft_new_msg(
             self::START_JOB,
             $job_id,
             $decodedInput
         );
-        
+
         $this->sqs->sendMessage(array(
                 'QueueUrl'    => $decodedClient->{'queues'}->{'input'},
                 'MessageBody' => json_encode($msg),
