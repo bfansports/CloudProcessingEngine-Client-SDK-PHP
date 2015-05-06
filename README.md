@@ -10,7 +10,11 @@ https://packagist.org/packages/sportarchive/cloud-transcode-php-sdk
 
 http://sportarchive.github.io/CloudTranscode-SDK/
 
-# Cloud Transcode project
+# Cloud Transcode documentation
+
+http://sportarchive.github.io/CloudTranscode/
+
+# Cloud Transcode on GitHub
 
 https://github.com/sportarchive/CloudTranscode
 
