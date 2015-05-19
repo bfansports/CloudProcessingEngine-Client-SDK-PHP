@@ -5,8 +5,8 @@
     "homepage": "https://github.com/sportarchive/CloudTranscode-PHP-SDK",
     "authors": [
 	{
-	    "name": "Nicolas Menciere",
-	    "email": "nmenciere@sportarchive.tv"
+	    "name": "Sport Archive Inc",
+	    "email": "support@sportarchive.tv"
 	}
     ],
     "require": {
