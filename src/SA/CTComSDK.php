@@ -52,19 +52,20 @@ class CTComSDK
     public function receive_message($client, $timeout)
     {
         $decodedClient = is_object($client) ? $client : json_decode($client);
-        
+
+        $queue = $decodedClient->{'queues'}->{'output'};
         if ($this->debug)
             $this->log_out(
                 "DEBUG", 
                 "Polling from '$queue' ..."
             );
-            
+        
         // Poll from SQS to check for new message 
         $result = $this->sqs->receiveMessage(array(
-                'QueueUrl'        => $decodedClient->{'queues'}->{'output'},
+                'QueueUrl'        => $queue,
                 'WaitTimeSeconds' => $timeout,
             ));
-        
+            
         // Get the message if any and return it to the caller
         if (($messages = $result->get('Messages')) &&
             count($messages))
@@ -84,7 +85,6 @@ class CTComSDK
     public function delete_message($client, $msg)
     {
         $decodedClient = is_object($client) ? $client : json_decode($client);
-        
         $this->sqs->deleteMessage(array(
                 'QueueUrl'        => $decodedClient->{'queues'}->{'output'},
                 'ReceiptHandle'   => $msg['ReceiptHandle']));
@@ -93,10 +93,10 @@ class CTComSDK
     }
 
     // Send a new JOB to SQS Input queue
-    public function start_job($client, $input, $job_id = null)
+    public function start_job($client, $input, $jobId = null)
     {
         $decodedClient = is_object($client) ? $client : json_decode($client);
-        $decodedInput = is_object($client) ? $client : json_decode($input);
+        $decodedInput = is_object($input) ? $input : json_decode($input);
 
         if (!$decodedClient) {
             throw new \InvalidArgumentException(
@@ -109,10 +109,10 @@ class CTComSDK
 
         $this->validate_client($decodedClient);
 
-        $job_id = $job_id ?: md5($decodedClient->{'name'} . uniqid('',true));
+        $jobId = $jobId ?: md5($decodedClient->{'name'} . uniqid('',true));
         $msg = $this->craft_new_msg(
             self::START_JOB,
-            $job_id,
+            $jobId,
             $decodedInput
         );
 
@@ -121,7 +121,7 @@ class CTComSDK
                 'MessageBody' => json_encode($msg),
             ));
 
-        return ($job_id);
+        return ($jobId);
     }
 
     // XXX TODO
