@@ -7,7 +7,7 @@ use Aws\Common\Aws;
 use Aws\Sqs;
 use Aws\Sts;
 
-class CTComSDK
+class CpeClientSdk
 {
     private $region;
     private $aws;
