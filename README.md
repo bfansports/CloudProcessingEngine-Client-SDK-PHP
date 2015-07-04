@@ -1,20 +1,19 @@
-CloudTranscode-PHP-SDK
+CloudProcessingEngine-PHP-Client-SDK
 ====================
 
-PHP implementation of the Cloud Transcode SDK.
+PHP implementation of the Cloud Processing Engine Client SDK.
+
+## Install
 
 Composer package:<br>
 https://packagist.org/packages/sportarchive/cloud-transcode-php-sdk
 
 ## SDK documentation
 
-http://sportarchive.github.io/CloudTranscode-SDK/
+http://sportarchive.github.io/CloudProcessingEngine-Client-SDK/
 
-## Cloud Transcode documentation
+## Cloud Processing Engine documentation
 
-http://sportarchive.github.io/CloudTranscode/
+http://sportarchive.github.io/CloudProcessingEngine/
 
-## Cloud Transcode on GitHub
-
-https://github.com/sportarchive/CloudTranscode
 
