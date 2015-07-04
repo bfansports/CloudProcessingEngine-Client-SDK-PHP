@@ -6,7 +6,7 @@ PHP implementation of the Cloud Processing Engine Client SDK.
 ## Install
 
 Composer package:<br>
-https://packagist.org/packages/sportarchive/cloud-transcode-php-sdk
+https://packagist.org/packages/sportarchive/cloud-processing-engine-php-client-sdk
 
 ## SDK documentation
 
