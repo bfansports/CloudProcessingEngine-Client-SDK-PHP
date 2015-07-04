@@ -1,8 +1,8 @@
 {
-    "name": "sportarchive/cloud-transcode-php-sdk",
-    "description": "PHP SDK for the Cloud Transcode project. Allows communication with the Cloud Transcode stack: submit jobs, get transcoding status, etc.",
-    "keywords": ["CloudTranscode","Cloud Transcode"],
-    "homepage": "https://github.com/sportarchive/CloudTranscode-PHP-SDK",
+    "name": "sportarchive/cloud-processing-engine-php-client-sdk",
+    "description": "PHP SDK for the Cloud Processing Engine client applications. Allows communication with the CPE Stack over SQS: start_job, get activity progress, etc. It is a simple SQS wrapper.",
+    "keywords": ["CloudProcessingEngine","Cloud Processing Engine","SQS"],
+    "homepage": "https://github.com/sportarchive/CloudProcessingEngine-PHP-Client-SDK",
     "authors": [
 	{
 	    "name": "Sport Archive Inc",
