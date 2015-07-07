@@ -10,8 +10,10 @@ before_script:
   - composer install -n --prefer-source --dev
   ## PHPDocumentor : Dossier de sortie
   - mkdir -p build/docs
+  - apt-get install -y software-properties-common
+  - apt-add-repository -y ppa:gviz-adm/graphviz-dev
   - sudo apt-get update -qq
-  - sudo apt-get install -y GraphViz
+  - sudo apt-get install -y graphviz
 script:
   ## PHPDocumentor : Generation de la documentation dans le dossier de sortie
   - vendor/bin/phpdoc.php -d ./src -t ./build/docs
