@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project title="Cloud Processing Engine Client SDK PHP" version="2.8.3">
+  <partials/>
+  <file path="CpeClientSdk.php" generated-path="CpeClientSdk.html" hash="da780cec6064b3a94cf4ea8dd2c0f072" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="Aws">\Aws\Common\Aws</namespace-alias>
+    <namespace-alias name="Sqs">\Aws\Sqs</namespace-alias>
+    <namespace-alias name="Sts">\Aws\Sts</namespace-alias>
+    <class final="false" abstract="false" namespace="SA" line="10" package="Default">
+      <extends/>
+      <name>CpeClientSdk</name>
+      <full_name>\SA\CpeClientSdk</full_name>
+      <docblock line="10">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="10" description="Default"/>
+      </docblock>
+      <constant namespace="SA" line="18" package="Default">
+        <name>START_JOB</name>
+        <full_name>\SA\CpeClientSdk::START_JOB</full_name>
+        <value>"START_JOB"</value>
+        <docblock line="18">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <property static="false" visibility="private" namespace="SA" line="12" package="Default">
+        <name>$region</name>
+        <full_name>\SA\CpeClientSdk::region</full_name>
+        <default></default>
+        <docblock line="12">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SA" line="13" package="Default">
+        <name>$aws</name>
+        <full_name>\SA\CpeClientSdk::aws</full_name>
+        <default></default>
+        <docblock line="13">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SA" line="14" package="Default">
+        <name>$sqs</name>
+        <full_name>\SA\CpeClientSdk::sqs</full_name>
+        <default></default>
+        <docblock line="14">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SA" line="15" package="Default">
+        <name>$sts</name>
+        <full_name>\SA\CpeClientSdk::sts</full_name>
+        <default></default>
+        <docblock line="15">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SA" line="22" package="Default">
+        <name>__construct</name>
+        <full_name>\SA\CpeClientSdk::__construct()</full_name>
+        <docblock line="22">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default>false</default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$secret</name>
+          <default>false</default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$region</name>
+          <default>false</default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$debug</name>
+          <default>false</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SA" line="52" package="Default">
+        <name>receive_message</name>
+        <full_name>\SA\CpeClientSdk::receive_message()</full_name>
+        <docblock line="52">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$client</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$timeout</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SA" line="85" package="Default">
+        <name>delete_message</name>
+        <full_name>\SA\CpeClientSdk::delete_message()</full_name>
+        <docblock line="85">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$client</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$msg</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SA" line="96" package="Default">
+        <name>start_job</name>
+        <full_name>\SA\CpeClientSdk::start_job()</full_name>
+        <docblock line="96">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$client</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$input</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$jobId</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="154" package="Default">
+        <name>log_out</name>
+        <full_name>\SA\CpeClientSdk::log_out()</full_name>
+        <docblock line="154">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$type</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$message</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="160" package="Default">
+        <name>craft_new_msg</name>
+        <full_name>\SA\CpeClientSdk::craft_new_msg()</full_name>
+        <docblock line="160">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$type</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$jobId</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$data</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="173" package="Default">
+        <name>validate_client</name>
+        <full_name>\SA\CpeClientSdk::validate_client()</full_name>
+        <docblock line="173">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$client</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="10" code="PPC:ERR-50005">No summary for class \SA\CpeClientSdk</error>
+      <error line="22" code="PPC:ERR-50015">Argument $key is missing from the Docblock of __construct</error>
+      <error line="22" code="PPC:ERR-50015">Argument $secret is missing from the Docblock of __construct</error>
+      <error line="22" code="PPC:ERR-50015">Argument $region is missing from the Docblock of __construct</error>
+      <error line="22" code="PPC:ERR-50015">Argument $debug is missing from the Docblock of __construct</error>
+      <error line="22" code="PPC:ERR-50008">No summary for method __construct()</error>
+      <error line="52" code="PPC:ERR-50015">Argument $client is missing from the Docblock of receive_message</error>
+      <error line="52" code="PPC:ERR-50015">Argument $timeout is missing from the Docblock of receive_message</error>
+      <error line="52" code="PPC:ERR-50008">No summary for method receive_message()</error>
+      <error line="85" code="PPC:ERR-50015">Argument $client is missing from the Docblock of delete_message</error>
+      <error line="85" code="PPC:ERR-50015">Argument $msg is missing from the Docblock of delete_message</error>
+      <error line="85" code="PPC:ERR-50008">No summary for method delete_message()</error>
+      <error line="96" code="PPC:ERR-50015">Argument $client is missing from the Docblock of start_job</error>
+      <error line="96" code="PPC:ERR-50015">Argument $input is missing from the Docblock of start_job</error>
+      <error line="96" code="PPC:ERR-50015">Argument $jobId is missing from the Docblock of start_job</error>
+      <error line="96" code="PPC:ERR-50008">No summary for method start_job()</error>
+      <error line="154" code="PPC:ERR-50015">Argument $type is missing from the Docblock of log_out</error>
+      <error line="154" code="PPC:ERR-50015">Argument $message is missing from the Docblock of log_out</error>
+      <error line="154" code="PPC:ERR-50008">No summary for method log_out()</error>
+      <error line="160" code="PPC:ERR-50015">Argument $type is missing from the Docblock of craft_new_msg</error>
+      <error line="160" code="PPC:ERR-50015">Argument $jobId is missing from the Docblock of craft_new_msg</error>
+      <error line="160" code="PPC:ERR-50015">Argument $data is missing from the Docblock of craft_new_msg</error>
+      <error line="160" code="PPC:ERR-50008">No summary for method craft_new_msg()</error>
+      <error line="173" code="PPC:ERR-50015">Argument $client is missing from the Docblock of validate_client</error>
+      <error line="173" code="PPC:ERR-50008">No summary for method validate_client()</error>
+      <error line="12" code="PPC:ERR-50007">No summary for property $region</error>
+      <error line="13" code="PPC:ERR-50007">No summary for property $aws</error>
+      <error line="14" code="PPC:ERR-50007">No summary for property $sqs</error>
+      <error line="15" code="PPC:ERR-50007">No summary for property $sts</error>
+    </parse_markers>
+    <source>eJy1WFtT2zgUfs+vEB6mtpkA+9KXsKUTkmw3LYUWh213Ssej2EpQ60iJJaebZfLf9+hixzeWy249A8jSOUfn9n2S+fX18nbZ6TC8IGKJI4KC/kmnc3yM+gv8N2coodMUp5SITiYI6v8QNwO+WHB2A8OTYi5YlV8kvHSiBAuBBksySChhMoi/d+46CJ5lStdYErSfkjnl7KQ6iZXZyoxYNWakndG/wNf3Yo4mmyU4qSYizoREwaR/NQnfXp6h4nmFnGLWOcmVP3/+jPpxjBZUCMrmKMJJIvJFY2vQvxiMzivGwNZuFoxphVnGIgkxoTDUimkWSa+Tq+x/JxvQm+FEkO5uVpAoJbJlweSnZSEm02yez+tpX/++K0ToDHl7er8XL4pJ9ex51os5kYStPaf/KQj7g8EoCMJ3oz/D8dDxfb+iIm9T/gMx8gPdjP6KyFIF6DkBuOw2lF0ERmnK2QJKjtbQOHiakD3HP6m5ZoNueldko+xgMBpcjSZqj6d6t9N8tGs27U3XinqUXRuOfutfn0/Cq9Gb8eXFU92raj/CxV0TyFsqDk8LnypoKgmYXlECemQbVT3Q3YOUKECBJygYvkMUWhaziNRtACbBAEC715vhSPJ04+E0xRuvEqp6XOOFi16d5h5VZHy/4SCAWXlX7HR4Cun1XCARt0V41S68KoS3FWL4wJMEcUYQsJvAc4KwRBhJuiBolvIFlIcArfA1jUmMgo8BWmUkI7n2x+JlmU0TGu3wnZKI0DUJrVlvP9Ik1wXXwDbPZB2QkP2IwyaGDCEGKkI+/UaAH6yuj14jO0Q99E1wFhqdQqBUu33tp6lqye7h6Z2rV4S7VWNwZJlJd1tt8XJnVLvVriR8HoJqs7zOcHR2/cbpouaKyrRiT51W1/jnoqOjI6faAC2tnNdJq6oiSI6iWxJ9RzOeauzk1Stzo8gSuesFaAwFBl2V97Yo9/WoLut1mrj5jGpW7XC3KfwJUzmBmgaQZxYL09m2yN17e7se3xsAvOq1PBAoA2Yb+ImhlWSWMkSlClvJqPOHpJWKeftWURikq9ht69tgof/9OmVFPGNyp1pipruK3L/3hE73A32hnvt7Q69e7MooFHwoWQPkKDOI6xUt4zTU70uremzyihi//PJ1J71tIYQhSYC8gQPyShRNV0H+hKOprUQM/AHXonL1brGAZcKAFrTAdKOX8XIJJIFlTnp10oj13i2csRDzn8MXtfppkBgvnoWRR3FNC4auFC6X8ndo94S41hgE/aW28tVvowdbY7hMkZzi8zIFBACENUWouxkASFVyzMCRUj3rdYBDLpXhNz4tlYAqHfgLs+MY0s2gsj+5Jtaa8bZiTDujbelR3ZRZLp0G5t5S8c6vYbx0DxmzNU5o3E/nmbpn7K4lTVK3ouhtcHmBXBOCq9KsU6jNQcIqF5Rtu1djE9L/75ROxoM+1ZGgLcDVJzQxebXklU/avCPs4HUPLeKXXhML6gvK3aIjlDG6orHnul3VspUbD/T87siKUjyTIfgbwnQ1TkGSWa9XfKtUIWUcqc2V01ysVOIoUYAA2DyJAB4Ev6lCG/btPmc83uizU3cyYaaTFfE1D9E68j0TsV9Hv/pwm1wOL837QQPnkbrLJhroPjo4zsXuSuOtGj+gDzdeuqZy8zwjcEgrD8KECvnfLEB/y0w830Yex6MMqXFu7cAU5ABdT8bngX05LsrwIaVAd7BJMBleXk8qn+qFA/nVYV/CZ3q3OLDrFEuiW+45X7TU10LqhjmN4g8Ueiz3K9K3ou27V6GW+2BwBJ2NJW5wvYFqCzpcdfmzh9iCRilX756GercmCNvkp53esrqsakpjc6FsgbSr3MrV1bgV1sUFSMzrGfrDchyy55U5XdoT1OBDe1y1/VuBCkEKCQC/o5jP2T7qw7c4Q9QVinFkWLP5Ed7Yw5DNc3exVPWEfUqk9rwt7bmk7T1x3/wm9byNrbbZGe3tkLPt/AMaBXB/</source>
+  </file>
+  <package name="Default" full_name="Default"/>
+  <package name="global" full_name="global"/>
+  <namespace name="SA" full_name="SA"/>
+  <deprecated count="0"/>
+</project>
