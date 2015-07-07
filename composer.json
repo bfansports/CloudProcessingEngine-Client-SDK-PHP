@@ -1,8 +1,8 @@
 {
-    "name": "sportarchive/cloud-processing-engine-php-client-sdk",
+    "name": "sportarchive/cloud-processing-engine-client-sdk-php",
     "description": "PHP SDK for the Cloud Processing Engine client applications. Allows communication with the CPE Stack over SQS: start_job, get activity progress, etc. It is a simple SQS wrapper.",
     "keywords": ["CloudProcessingEngine","Cloud Processing Engine","SQS"],
-    "homepage": "https://github.com/sportarchive/CloudProcessingEngine-PHP-Client-SDK",
+    "homepage": "https://github.com/sportarchive/CloudProcessingEngine-Client-SDK-PHP",
     "authors": [
 	{
 	    "name": "Sport Archive Inc",

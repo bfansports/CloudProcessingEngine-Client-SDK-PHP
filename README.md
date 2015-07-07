@@ -10,7 +10,7 @@ https://packagist.org/packages/sportarchive/cloud-processing-engine-php-client-s
 
 ## SDK documentation
 
-http://sportarchive.github.io/CloudProcessingEngine-Client-SDK/
+TODO
 
 ## Cloud Processing Engine documentation
 
