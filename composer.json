@@ -12,6 +12,9 @@
     "require": {
         "aws/aws-sdk-php": "2.*"
     },
+    "require-dev": {
+	"phpdocumentor/phpdocumentor":"2.*"
+    },
     "autoload": {
         "psr-0": { "SA": "src/" }
     }
