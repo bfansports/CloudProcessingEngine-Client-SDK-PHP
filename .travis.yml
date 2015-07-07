@@ -1,0 +1,19 @@
+language: php
+php:
+  - 5.5
+  - 5.6
+env:
+  global:
+  - secure: "JQSmbUIKz8dEXqHiNo7fHhm/l2geaVD3itJ+Ye94fYl/Xm9ssehL9qNBZ5sOZRTVcl7jpIa8obApY3Plbj+g/L86Xm032EtKLS3psGGQQesB6o+OkzWd4TdVj/24XQcGWCTgCxKeSmikkyngjfU+Feamb8Cac6c0qEeiOuorFmL02r5rDCgO7C7RsOzXQOBwSc9qObr8CsiSrp2LLAkDtV+OBVg4gs/f2r978UZKhVyHij+QWLkWY10PwuJuRlUg6BLstb79cQ3K+tIXE8GE/Mw/W34PSrvQh3YKju6/e8mLsTMoxLzGpYosm+8oGKjfmHVz1TTpWJg1MbG+5TvpkTduFAqhRwwFviJqips1rRjUh95m0Gnkk8RzavDKJ08tGGIS/UpLkiL3TQxO4bVpsG+zWd2Gxx/fOVkj5gKU1AdkVua28GvtBGOloe2Ko2Mnkd1+HaV5jxTeCR7IlSdhL/yRkIfjkWth5un9eduhL6Os66OnL7htc6JaP57EXpYbGMV4aMHdXPetSnIrph2AyW59KtccOsem7JEwf7u4S8IUpYXXPgcO9HJgwRAe4fdl1GeCxFm3ML7xeADMBrQ5+v6U59uuRXs00v4kabTSfGnjKHY6wLt2Gs66YJA9kwLcQQXC5iVMFJFsvScUoTPEvQ+7Ip4mGQSQG/bTm3p3YXo="
+before_script:
+  ## Composer : Mise à jour et Installation des pre-requis
+  - composer selfupdate --quiet
+  - composer install -n --prefer-source --dev
+  ## PHPDocumentor : Dossier de sortie
+  - mkdir -p build/docs
+script:
+  ## PHPDocumentor : Generation de la documentation dans le dossier de sortie
+  - vendor/bin/phpdoc.php -d ./src -t ./build/docs
+after_script:
+ ## PHPDocumentor : Upload vers les GitHub Pages
+ - bash .travis_publish_doc.sh

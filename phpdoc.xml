@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+  <title><![CDATA[Cloud Processing Engine SDK]]></title>
+  <markers>
+    <item>TODO</item>
+    <item>FIXME</item>
+    <item>XXX</item>
+  </markers>
+  <transformations>
+    <template name="responsive" />
+  </transformations>
+</phpdoc>
