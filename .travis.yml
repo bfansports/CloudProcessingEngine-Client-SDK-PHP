@@ -8,6 +8,8 @@ before_script:
   - sudo apt-get install -y software-properties-common
   - sudo apt-add-repository -y ppa:gviz-adm/graphviz-dev
   - sudo apt-get update -qq
+  - sudo apt-get remove -y libcdt4
+  - sudo apt-get remove -y libpathplan4
   - sudo apt-get install -y graphviz
   ## Composer : Mise à jour et Installation des pre-requis
   - composer selfupdate --quiet
