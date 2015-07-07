@@ -5,15 +5,15 @@ env:
   global:
   - secure: "rkvfMwJlS+nI+z9ixKF44ffUoBsfs3TtycDlAbuzJhI3GwPXnABH6jnEcM4b1Q7Z8K8m93B4hpKpZWBwprcq/JwHWxCStZGvz2jmlhq2q1QXft3f2tznKZQ/PtCRxRMkhpbszLC1sDpjAfOYhASwUDAZDhxwuKSkPwQsTYzZYd26Xsb8SljI8hXwRsM4hNj02DPCUJZus48jdSQNLuUb3LnyHbTgX1183+oWwUZKRaQctH0kRZAiGSWYzrQdKJQzFU+gFHklmBOvmwfWXqaV2bzj4fJ1rx2Eqc63ci+W+Gww8E6Ylftx76tvIKBfhQWbKyk8/2rX6OC8vG7AqJ3q2KZiMAMITMuF8G/wTBUDpJS1907gp5U42dGNzr1OLzgSqobRr0s+nEzS6qPtxPlIJ/uTyy0qBTvBpX/DabFuTU2yxgYemKVZ4buFF5cjNrqAClc1ioAzIhjGm9UqVXEvbc5nsP9/XOFztV9eB/CMCurI3Ah5BjDLnGMIwX6DSu+I2j5gvrDCTp7k2PK7iTJ4PsyB2RNrUxOhJoeYak9fNGfeJjq7458vkGJNiVFWdtBayZNBI9cEo7ifnjVJAB+EGeECTGjPTzSBgk921KRt8ls0IhnT+5k3cQeSu+CvtJnRjYuLxrbnqWkPXAPrh7bDyUwZnvF+Xt4Ce5zOqmHwhAs="
 before_script:
+  - apt-get install -y software-properties-common
+  - apt-add-repository -y ppa:gviz-adm/graphviz-dev
+  - sudo apt-get update -qq
+  - sudo apt-get install -y graphviz
   ## Composer : Mise à jour et Installation des pre-requis
   - composer selfupdate --quiet
   - composer install -n --prefer-source --dev
   ## PHPDocumentor : Dossier de sortie
   - mkdir -p build/docs
-  - apt-get install -y software-properties-common
-  - apt-add-repository -y ppa:gviz-adm/graphviz-dev
-  - sudo apt-get update -qq
-  - sudo apt-get install -y graphviz
 script:
   ## PHPDocumentor : Generation de la documentation dans le dossier de sortie
   - vendor/bin/phpdoc.php -d ./src -t ./build/docs
