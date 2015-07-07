@@ -1,25 +1,20 @@
 language: php
 php:
-  - 5.6
+- 5.6
 env:
   global:
-  - secure: "JQSmbUIKz8dEXqHiNo7fHhm/l2geaVD3itJ+Ye94fYl/Xm9ssehL9qNBZ5sOZRTVcl7jpIa8obApY3Plbj+g/L86Xm032EtKLS3psGGQQesB6o+OkzWd4TdVj/24XQcGWCTgCxKeSmikkyngjfU+Feamb8Cac6c0qEeiOuorFmL02r5rDCgO7C7RsOzXQOBwSc9qObr8CsiSrp2LLAkDtV+OBVg4gs/f2r978UZKhVyHij+QWLkWY10PwuJuRlUg6BLstb79cQ3K+tIXE8GE/Mw/W34PSrvQh3YKju6/e8mLsTMoxLzGpYosm+8oGKjfmHVz1TTpWJg1MbG+5TvpkTduFAqhRwwFviJqips1rRjUh95m0Gnkk8RzavDKJ08tGGIS/UpLkiL3TQxO4bVpsG+zWd2Gxx/fOVkj5gKU1AdkVua28GvtBGOloe2Ko2Mnkd1+HaV5jxTeCR7IlSdhL/yRkIfjkWth5un9eduhL6Os66OnL7htc6JaP57EXpYbGMV4aMHdXPetSnIrph2AyW59KtccOsem7JEwf7u4S8IUpYXXPgcO9HJgwRAe4fdl1GeCxFm3ML7xeADMBrQ5+v6U59uuRXs00v4kabTSfGnjKHY6wLt2Gs66YJA9kwLcQQXC5iVMFJFsvScUoTPEvQ+7Ip4mGQSQG/bTm3p3YXo="
-
+  - secure: i+bGFlCCxJ1jwW5FxtCdV7xt9KzAZs0ZjJOsCDvqTWWGF0oD/xGJH7f57vyLG7QwbQKJWIue8dhafKgs+8PAL3dijiiIWL+Qzyq3abmlvRoBt8qj5uu/369brWjBj9+TVjjYKDH3D1dWDqmNhovhSeDX41X2dSeuKR8PoTqCofZImD4jUKZDHIAmNntWhLZ29nSQkZjyuKUrEyJDs+UZJS2Hv9EaeX8fLYr2yBL9cz0BvgGwLqevsf7FS5VRuD4Qk0cXVFhublz5vx+3srvrC9nqxwJa4GtXMScllK/sITQG1XuYmDWpEDGzkjdpKkuM7nci1L1Lt+C7GvShl8F+Ga49NVOkdTyOk6OUsmI62qpnl1CUbwYZJG1F9gFG2U/G/9MwrGamu+C9xRiHjttEdbRGrTg04pZxeKVCKK0JfiV23r6VRzHj8Xc3u2Ja2MuFBcpNopeV4a9wKFKzUfnCume5VdeFTIXAHD1MmmZabhSncTw66YB8tX+O6xv73bXv0gIf3LHEaBg+/dIAUTHk88Ji4y6jkMfJtG3zHTgRz5j/amo8vDGWnVNPJEFV0y3w4UNsOhV5mxFvpQZIK2QjjmhzfkcXFGIEFR39Jp+dIQl15XCwTxXdgZL2eFZiy2paJLEdaqRKufpLriO7BwGW1OICtx6xYr0PQciog/A/u7k=
 before_script:
-  - sudo apt-get install -y software-properties-common
-  - sudo apt-add-repository -y ppa:gviz-adm/graphviz-dev
-  - sudo apt-get update -qq
-  - sudo apt-get remove -y libcdt4
-  - sudo apt-get remove -y libpathplan4
-  - sudo apt-get install -y graphviz
-  ## Composer : Mise à jour et Installation des pre-requis
-  - composer selfupdate --quiet
-  - composer install -n --prefer-source --dev
-  ## PHPDocumentor : Dossier de sortie
-  - mkdir -p build/docs
+- sudo apt-get install -y software-properties-common
+- sudo apt-add-repository -y ppa:gviz-adm/graphviz-dev
+- sudo apt-get update -qq
+- sudo apt-get remove -y libcdt4
+- sudo apt-get remove -y libpathplan4
+- sudo apt-get install -y graphviz
+- composer selfupdate --quiet
+- composer install -n --prefer-source --dev
+- mkdir -p build/docs
 script:
-  ## PHPDocumentor : Generation de la documentation dans le dossier de sortie
-  - vendor/bin/phpdoc.php -d ./src -t ./build/docs
+- vendor/bin/phpdoc.php -d ./src -t ./build/docs
 after_script:
- ## PHPDocumentor : Upload vers les GitHub Pages
- - bash .travis_publish_doc.sh
+- bash .travis_publish_doc.sh
