@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpdoc>
-  <title><![CDATA[Cloud Processing Engine SDK]]></title>
+  <title><![CDATA[Cloud Processing Engine Client SDK PHP]]></title>
   <markers>
     <item>TODO</item>
     <item>FIXME</item>
