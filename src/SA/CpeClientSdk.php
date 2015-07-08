@@ -1,30 +1,91 @@
 <?php
 
+/** 
+ * Copyright (C) 2015, Sport Archive Inc.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (version 3) as published by
+ * the Free Software Foundation; 
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * For a complete version of the license, head to:
+ * http://www.gnu.org/licenses/gpl-3.0.en.html
+ * 
+ * Cloud Processing Engine, Copyright (C) 2015, Sport Archive Inc
+ * Cloud Processing Engine comes with ABSOLUTELY NO WARRANTY;
+ * This is free software, and you are welcome to redistribute it
+ * under certain conditions;
+ * 
+ * June 29th 2015
+ * Sport Archive Inc.
+ * info@sportarchive.tv 
+ *
+ */
+
 namespace SA;
 
-// Amazon libraries
 use Aws\Common\Aws;
 use Aws\Sqs;
 use Aws\Sts;
 
+/**
+ * The CpeClientSDK is to be used by client applications of the 
+ * Client Processing Engine (CPE) project.
+ * 
+ * See: https://github.com/sportarchive/CloudProcessingEngine
+ *
+ * You must use this SDK in your PHP client application if you want to communicate 
+ * with the CPE stack through AWS SQS.
+ * 
+ * **It allows you to:**
+ *    - Poll SQS messages coming from the CPE stack
+ *    - Send correctly crafted messages to the CPE Stack (commands such as `start_job`).
+ *
+ *
+ * **Install:**
+ * To install this SDK, just user composer.
+ * 
+ * See: https://packagist.org/packages/sportarchive/cloud-processing-engine-client-sdk-php
+ */
 class CpeClientSdk
 {
+    /** AWS region for SQS **/
     private $region;
+    /** AWS SDK handler **/
     private $aws;
+    /** AWS SQS handler **/
     private $sqs;
+    /** 
+     * AWS STS handler.
+     * 
+     * You can use AWS roles with your EC2 instance instead of passing AWS credentials.
+     */
     private $sts;
     
     // Msg Types
     const START_JOB          = "START_JOB";
-    // XXX Add missing calls
+    // FIXME: Add missing calls
     // const CANCEL_JOB         = "CANCEL_JOB";
 
-    function __construct(
-        $key = false,
-        $secret = false,
-        $region = false,
-        $debug = false
-    )
+    /**
+     * Constructor for the CpeClientSdk class.
+     *
+     * By default the SDK will look for AWS credentials in your environment variables.
+     * You can pass on your AWS credentials to the constructor too.
+     * You must specify the region your SQS queues are setup.
+     *
+     * @param string $key AWS key
+     * @param string $secret AWS secret
+     * @param string $region AWS region
+     * @param string $debug Debug flag
+     *
+     * @return void
+     */
+    function __construct($key = false, $secret = false, $region = false, $debug = false)
     {
         if (!$key &&
             !($key = getenv("AWS_ACCESS_KEY_ID")))
@@ -47,8 +108,17 @@ class CpeClientSdk
         $this->sqs = $this->aws->get('Sqs');
     }
     
-    // Poll one message at a time from the provided SQS queue
-    // Queue
+    /**
+     * Poll for incoming SQS messages using this method.
+     *
+     * Call this method in a loop in your client application.
+     * If a new message is polled, it is returned to the caller.
+     *
+     * @param string|object $client JSON string or PHP Object created using json_decode. This contains your client SQS configuration which list your application `input` and `output` queues. 
+     * @param integer $timeout Timeout value for the polling. After $timeout, the poller will return.
+     *
+     * @return object|false The SQS message or false if nothing. Can throw an Exception. Use try catch.
+     */
     public function receive_message($client, $timeout)
     {
         $decodedClient = is_object($client) ? $client : json_decode($client);
@@ -78,10 +148,21 @@ class CpeClientSdk
             
             return $messages[0];
         }
+        
+        return false;
     }
     
-    // Delete a message from SQS queue
-    // To be called once the message has been pulled by the application
+    /**
+     * Delete the provided message from the SQS queue
+     *
+     * Call this method from your client application after receiving a message
+     * You must clean the SQS yourself, or you will keep processing the same messages
+     *
+     * @param string|object $client JSON string or PHP Object created using json_decode. This contains your client SQS configuration which list your application `input` and `output` queues. 
+     * @param object $msg The message oject you received from `receive_message``
+     *
+     * @return true Can throw an Exeception if it fails. Use try catch.
+     */
     public function delete_message($client, $msg)
     {
         $decodedClient = is_object($client) ? $client : json_decode($client);
@@ -91,8 +172,21 @@ class CpeClientSdk
         
         return true;
     }
-
-    // Send a new JOB to SQS Input queue
+    
+    /**
+     * Send a `start_job` command to CPE
+     *
+     * Call this method from your client application to start a new job.
+     * You can pass an object or a JSON string as input payload.
+     * You can also specify your own jobId, or it will generate it for you.
+     *
+     * @param string|object $client JSON string or PHP Object created using json_decode. This contains your client SQS configuration which list your application `input` and `output` queues. 
+     * @param object|string $input The data payload to be sent out to CPE. This will be used 
+     *    as input for your workflow.
+     * @param string|null $jobId JobID for your new job. Will be generated for you if not provided.
+     *
+     * @return string Return the JobIb for the job. Can throw execeptions if it fails. Use try catch.
+     */
     public function start_job($client, $input, $jobId = null)
     {
         $decodedClient = is_object($client) ? $client : json_decode($client);
@@ -124,7 +218,8 @@ class CpeClientSdk
         return ($jobId);
     }
 
-    // XXX TODO
+    // FIXME: Need to implement those methods
+    
     /* public function cancel_job() */
     /* { */
     /* } */
@@ -149,14 +244,25 @@ class CpeClientSdk
     /**
      * UTILS
      */
-
-    // Print on STDOUT
+    
+    /** 
+     * Simple logout function 
+     * 
+     * @param string $type Type of log message (error, debug, etc)
+     * @param string $message Message to be printed out
+     */
     private function log_out($type, $message)
     {
         echo("[$type] $message\n");
     }
-
-    // Craft a new SQS message
+    
+    /** 
+     * Craft the object to be sent out to SQS 
+     *
+     * @param string $type Type of CPE command you send 
+     * @param string $jobId Job ID for the command
+     * @param string $data Data payload to be sent out
+     */
     private function craft_new_msg($type, $jobId, $data)
     {
         $msg = array(
@@ -168,8 +274,12 @@ class CpeClientSdk
 
         return $msg;
     }
-
-    // Validate Client object
+    
+    /** 
+     * Validate Client object structure 
+     * 
+     * @param string|object $client JSON string or PHP Object created using json_decode. This contains your client SQS configuration which list your application `input` and `output` queues. 
+     */
     private function validate_client($client)
     {
         if (!isset($client->{"name"}))
