@@ -1,244 +1,325 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project title="Cloud Processing Engine Client SDK PHP" version="2.8.3">
   <partials/>
-  <file path="CpeClientSdk.php" generated-path="CpeClientSdk.html" hash="da780cec6064b3a94cf4ea8dd2c0f072" package="Default">
+  <file path="CpeClientSdk.php" generated-path="CpeClientSdk.html" hash="aa608ffaf3afaca4ecbec14d2a135ab3" package="Default">
     <docblock line="0">
-      <description></description>
-      <long-description></long-description>
+      <description>Copyright (C) 2015, Sport Archive Inc.</description>
+      <long-description>This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License (version 3) as published by
+the Free Software Foundation;
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+For a complete version of the license, head to:
+http://www.gnu.org/licenses/gpl-3.0.en.html
+
+Cloud Processing Engine, Copyright (C) 2015, Sport Archive Inc
+Cloud Processing Engine comes with ABSOLUTELY NO WARRANTY;
+This is free software, and you are welcome to redistribute it
+under certain conditions;
+
+June 29th 2015
+Sport Archive Inc.
+info@sportarchive.tv</long-description>
       <tag name="package" line="0" description="Default"/>
     </docblock>
     <namespace-alias name="Aws">\Aws\Common\Aws</namespace-alias>
     <namespace-alias name="Sqs">\Aws\Sqs</namespace-alias>
     <namespace-alias name="Sts">\Aws\Sts</namespace-alias>
-    <class final="false" abstract="false" namespace="SA" line="10" package="Default">
+    <class final="false" abstract="false" namespace="SA" line="54" package="Default">
       <extends/>
       <name>CpeClientSdk</name>
       <full_name>\SA\CpeClientSdk</full_name>
-      <docblock line="10">
-        <description></description>
-        <long-description></long-description>
-        <tag name="package" line="10" description="Default"/>
+      <docblock line="54">
+        <description>The CpeClientSDK is to be used by client applications of the
+Client Processing Engine (CPE) project.</description>
+        <long-description>See: https://github.com/sportarchive/CloudProcessingEngine
+
+You must use this SDK in your PHP client application if you want to communicate
+with the CPE stack through AWS SQS.
+
+**It allows you to:**
+   - Poll SQS messages coming from the CPE stack
+   - Send correctly crafted messages to the CPE Stack (commands such as `start_job`).
+
+
+**Install:**
+To install this SDK, just user composer.
+
+See: https://packagist.org/packages/sportarchive/cloud-processing-engine-client-sdk-php</long-description>
+        <tag name="package" line="54" description="Default"/>
       </docblock>
-      <constant namespace="SA" line="18" package="Default">
+      <constant namespace="SA" line="70" package="Default">
         <name>START_JOB</name>
         <full_name>\SA\CpeClientSdk::START_JOB</full_name>
         <value>"START_JOB"</value>
-        <docblock line="18">
+        <docblock line="70">
           <description></description>
           <long-description></long-description>
         </docblock>
       </constant>
-      <property static="false" visibility="private" namespace="SA" line="12" package="Default">
+      <property static="false" visibility="private" namespace="SA" line="57" package="Default">
         <name>$region</name>
         <full_name>\SA\CpeClientSdk::region</full_name>
         <default></default>
-        <docblock line="12">
-          <description></description>
+        <docblock line="57">
+          <description>AWS region for SQS *</description>
           <long-description></long-description>
         </docblock>
       </property>
-      <property static="false" visibility="private" namespace="SA" line="13" package="Default">
+      <property static="false" visibility="private" namespace="SA" line="59" package="Default">
         <name>$aws</name>
         <full_name>\SA\CpeClientSdk::aws</full_name>
         <default></default>
-        <docblock line="13">
-          <description></description>
+        <docblock line="59">
+          <description>AWS SDK handler *</description>
           <long-description></long-description>
         </docblock>
       </property>
-      <property static="false" visibility="private" namespace="SA" line="14" package="Default">
+      <property static="false" visibility="private" namespace="SA" line="61" package="Default">
         <name>$sqs</name>
         <full_name>\SA\CpeClientSdk::sqs</full_name>
         <default></default>
-        <docblock line="14">
-          <description></description>
+        <docblock line="61">
+          <description>AWS SQS handler *</description>
           <long-description></long-description>
         </docblock>
       </property>
-      <property static="false" visibility="private" namespace="SA" line="15" package="Default">
+      <property static="false" visibility="private" namespace="SA" line="67" package="Default">
         <name>$sts</name>
         <full_name>\SA\CpeClientSdk::sts</full_name>
         <default></default>
-        <docblock line="15">
-          <description></description>
-          <long-description></long-description>
+        <docblock line="67">
+          <description>AWS STS handler.</description>
+          <long-description>You can use AWS roles with your EC2 instance instead of passing AWS credentials.</long-description>
         </docblock>
       </property>
-      <method final="false" abstract="false" static="false" visibility="public" namespace="SA" line="22" package="Default">
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SA" line="88" package="Default">
         <name>__construct</name>
         <full_name>\SA\CpeClientSdk::__construct()</full_name>
-        <docblock line="22">
-          <description></description>
-          <long-description></long-description>
+        <docblock line="88">
+          <description>Constructor for the CpeClientSdk class.</description>
+          <long-description>By default the SDK will look for AWS credentials in your environment variables.
+You can pass on your AWS credentials to the constructor too.
+You must specify the region your SQS queues are setup.</long-description>
+          <tag name="param" line="88" description="&lt;p&gt;AWS key&lt;/p&gt;" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="88" description="&lt;p&gt;AWS secret&lt;/p&gt;" type="string" variable="$secret">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="88" description="&lt;p&gt;AWS region&lt;/p&gt;" type="string" variable="$region">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="88" description="&lt;p&gt;Debug flag&lt;/p&gt;" type="string" variable="$debug">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="88" description="" type="void">
+            <type>void</type>
+          </tag>
         </docblock>
         <argument line="0" by_reference="false">
           <name>$key</name>
           <default>false</default>
-          <type/>
+          <type>string</type>
         </argument>
         <argument line="0" by_reference="false">
           <name>$secret</name>
           <default>false</default>
-          <type/>
+          <type>string</type>
         </argument>
         <argument line="0" by_reference="false">
           <name>$region</name>
           <default>false</default>
-          <type/>
+          <type>string</type>
         </argument>
         <argument line="0" by_reference="false">
           <name>$debug</name>
           <default>false</default>
-          <type/>
+          <type>string</type>
         </argument>
       </method>
-      <method final="false" abstract="false" static="false" visibility="public" namespace="SA" line="52" package="Default">
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SA" line="122" package="Default">
         <name>receive_message</name>
         <full_name>\SA\CpeClientSdk::receive_message()</full_name>
-        <docblock line="52">
-          <description></description>
-          <long-description></long-description>
+        <docblock line="122">
+          <description>Poll for incoming SQS messages using this method.</description>
+          <long-description>Call this method in a loop in your client application.
+If a new message is polled, it is returned to the caller.</long-description>
+          <tag name="param" line="122" description="&lt;p&gt;JSON string or PHP Object created using json_decode. This contains your client SQS configuration which list your application &lt;code&gt;input&lt;/code&gt; and &lt;code&gt;output&lt;/code&gt; queues.&lt;/p&gt;" type="string|object" variable="$client">
+            <type>string</type>
+            <type>object</type>
+          </tag>
+          <tag name="param" line="122" description="&lt;p&gt;Timeout value for the polling. After $timeout, the poller will return.&lt;/p&gt;" type="integer" variable="$timeout">
+            <type>integer</type>
+          </tag>
+          <tag name="return" line="122" description="The SQS message or false if nothing. Can throw an Exception. Use try catch." type="object|false">
+            <type>object</type>
+            <type>false</type>
+          </tag>
         </docblock>
         <argument line="0" by_reference="false">
           <name>$client</name>
           <default></default>
-          <type/>
+          <type>string|object</type>
         </argument>
         <argument line="0" by_reference="false">
           <name>$timeout</name>
           <default></default>
-          <type/>
+          <type>integer</type>
         </argument>
       </method>
-      <method final="false" abstract="false" static="false" visibility="public" namespace="SA" line="85" package="Default">
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SA" line="166" package="Default">
         <name>delete_message</name>
         <full_name>\SA\CpeClientSdk::delete_message()</full_name>
-        <docblock line="85">
-          <description></description>
-          <long-description></long-description>
+        <docblock line="166">
+          <description>Delete the provided message from the SQS queue</description>
+          <long-description>Call this method from your client application after receiving a message
+You must clean the SQS yourself, or you will keep processing the same messages</long-description>
+          <tag name="param" line="166" description="&lt;p&gt;JSON string or PHP Object created using json_decode. This contains your client SQS configuration which list your application &lt;code&gt;input&lt;/code&gt; and &lt;code&gt;output&lt;/code&gt; queues.&lt;/p&gt;" type="string|object" variable="$client">
+            <type>string</type>
+            <type>object</type>
+          </tag>
+          <tag name="param" line="166" description="&lt;p&gt;The message oject you received from `receive_message``&lt;/p&gt;" type="object" variable="$msg">
+            <type>object</type>
+          </tag>
+          <tag name="return" line="166" description="Can throw an Exeception if it fails. Use try catch." type="true">
+            <type>true</type>
+          </tag>
         </docblock>
         <argument line="0" by_reference="false">
           <name>$client</name>
           <default></default>
-          <type/>
+          <type>string|object</type>
         </argument>
         <argument line="0" by_reference="false">
           <name>$msg</name>
           <default></default>
-          <type/>
+          <type>object</type>
         </argument>
       </method>
-      <method final="false" abstract="false" static="false" visibility="public" namespace="SA" line="96" package="Default">
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SA" line="190" package="Default">
         <name>start_job</name>
         <full_name>\SA\CpeClientSdk::start_job()</full_name>
-        <docblock line="96">
-          <description></description>
-          <long-description></long-description>
+        <docblock line="190">
+          <description>Send a `start_job` command to CPE</description>
+          <long-description>Call this method from your client application to start a new job.
+You can pass an object or a JSON string as input payload.
+You can also specify your own jobId, or it will generate it for you.</long-description>
+          <tag name="param" line="190" description="&lt;p&gt;JSON string or PHP Object created using json_decode. This contains your client SQS configuration which list your application &lt;code&gt;input&lt;/code&gt; and &lt;code&gt;output&lt;/code&gt; queues.&lt;/p&gt;" type="string|object" variable="$client">
+            <type>string</type>
+            <type>object</type>
+          </tag>
+          <tag name="param" line="190" description="&lt;p&gt;The data payload to be sent out to CPE. This will be used&#10;   as input for your workflow.&lt;/p&gt;" type="object|string" variable="$input">
+            <type>object</type>
+            <type>string</type>
+          </tag>
+          <tag name="param" line="190" description="&lt;p&gt;JobID for your new job. Will be generated for you if not provided.&lt;/p&gt;" type="string|null" variable="$jobId">
+            <type>string</type>
+            <type>null</type>
+          </tag>
+          <tag name="return" line="190" description="Return the JobIb for the job. Can throw execeptions if it fails. Use try catch." type="string">
+            <type>string</type>
+          </tag>
         </docblock>
         <argument line="0" by_reference="false">
           <name>$client</name>
           <default></default>
-          <type/>
+          <type>string|object</type>
         </argument>
         <argument line="0" by_reference="false">
           <name>$input</name>
           <default></default>
-          <type/>
+          <type>object|string</type>
         </argument>
         <argument line="0" by_reference="false">
           <name>$jobId</name>
           <default>null</default>
-          <type/>
+          <type>string|null</type>
         </argument>
       </method>
-      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="154" package="Default">
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="254" package="Default">
         <name>log_out</name>
         <full_name>\SA\CpeClientSdk::log_out()</full_name>
-        <docblock line="154">
-          <description></description>
+        <docblock line="254">
+          <description>Simple logout function</description>
           <long-description></long-description>
+          <tag name="param" line="254" description="&lt;p&gt;Type of log message (error, debug, etc)&lt;/p&gt;" type="string" variable="$type">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="254" description="&lt;p&gt;Message to be printed out&lt;/p&gt;" type="string" variable="$message">
+            <type>string</type>
+          </tag>
         </docblock>
         <argument line="0" by_reference="false">
           <name>$type</name>
           <default></default>
-          <type/>
+          <type>string</type>
         </argument>
         <argument line="0" by_reference="false">
           <name>$message</name>
           <default></default>
-          <type/>
+          <type>string</type>
         </argument>
       </method>
-      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="160" package="Default">
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="266" package="Default">
         <name>craft_new_msg</name>
         <full_name>\SA\CpeClientSdk::craft_new_msg()</full_name>
-        <docblock line="160">
-          <description></description>
+        <docblock line="266">
+          <description>Craft the object to be sent out to SQS</description>
           <long-description></long-description>
+          <tag name="param" line="266" description="&lt;p&gt;Type of CPE command you send&lt;/p&gt;" type="string" variable="$type">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="266" description="&lt;p&gt;Job ID for the command&lt;/p&gt;" type="string" variable="$jobId">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="266" description="&lt;p&gt;Data payload to be sent out&lt;/p&gt;" type="string" variable="$data">
+            <type>string</type>
+          </tag>
         </docblock>
         <argument line="0" by_reference="false">
           <name>$type</name>
           <default></default>
-          <type/>
+          <type>string</type>
         </argument>
         <argument line="0" by_reference="false">
           <name>$jobId</name>
           <default></default>
-          <type/>
+          <type>string</type>
         </argument>
         <argument line="0" by_reference="false">
           <name>$data</name>
           <default></default>
-          <type/>
+          <type>string</type>
         </argument>
       </method>
-      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="173" package="Default">
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="283" package="Default">
         <name>validate_client</name>
         <full_name>\SA\CpeClientSdk::validate_client()</full_name>
-        <docblock line="173">
-          <description></description>
+        <docblock line="283">
+          <description>Validate Client object structure</description>
           <long-description></long-description>
+          <tag name="param" line="283" description="&lt;p&gt;JSON string or PHP Object created using json_decode. This contains your client SQS configuration which list your application &lt;code&gt;input&lt;/code&gt; and &lt;code&gt;output&lt;/code&gt; queues.&lt;/p&gt;" type="string|object" variable="$client">
+            <type>string</type>
+            <type>object</type>
+          </tag>
         </docblock>
         <argument line="0" by_reference="false">
           <name>$client</name>
           <default></default>
-          <type/>
+          <type>string|object</type>
         </argument>
       </method>
     </class>
-    <parse_markers>
-      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
-      <error line="10" code="PPC:ERR-50005">No summary for class \SA\CpeClientSdk</error>
-      <error line="22" code="PPC:ERR-50015">Argument $key is missing from the Docblock of __construct</error>
-      <error line="22" code="PPC:ERR-50015">Argument $secret is missing from the Docblock of __construct</error>
-      <error line="22" code="PPC:ERR-50015">Argument $region is missing from the Docblock of __construct</error>
-      <error line="22" code="PPC:ERR-50015">Argument $debug is missing from the Docblock of __construct</error>
-      <error line="22" code="PPC:ERR-50008">No summary for method __construct()</error>
-      <error line="52" code="PPC:ERR-50015">Argument $client is missing from the Docblock of receive_message</error>
-      <error line="52" code="PPC:ERR-50015">Argument $timeout is missing from the Docblock of receive_message</error>
-      <error line="52" code="PPC:ERR-50008">No summary for method receive_message()</error>
-      <error line="85" code="PPC:ERR-50015">Argument $client is missing from the Docblock of delete_message</error>
-      <error line="85" code="PPC:ERR-50015">Argument $msg is missing from the Docblock of delete_message</error>
-      <error line="85" code="PPC:ERR-50008">No summary for method delete_message()</error>
-      <error line="96" code="PPC:ERR-50015">Argument $client is missing from the Docblock of start_job</error>
-      <error line="96" code="PPC:ERR-50015">Argument $input is missing from the Docblock of start_job</error>
-      <error line="96" code="PPC:ERR-50015">Argument $jobId is missing from the Docblock of start_job</error>
-      <error line="96" code="PPC:ERR-50008">No summary for method start_job()</error>
-      <error line="154" code="PPC:ERR-50015">Argument $type is missing from the Docblock of log_out</error>
-      <error line="154" code="PPC:ERR-50015">Argument $message is missing from the Docblock of log_out</error>
-      <error line="154" code="PPC:ERR-50008">No summary for method log_out()</error>
-      <error line="160" code="PPC:ERR-50015">Argument $type is missing from the Docblock of craft_new_msg</error>
-      <error line="160" code="PPC:ERR-50015">Argument $jobId is missing from the Docblock of craft_new_msg</error>
-      <error line="160" code="PPC:ERR-50015">Argument $data is missing from the Docblock of craft_new_msg</error>
-      <error line="160" code="PPC:ERR-50008">No summary for method craft_new_msg()</error>
-      <error line="173" code="PPC:ERR-50015">Argument $client is missing from the Docblock of validate_client</error>
-      <error line="173" code="PPC:ERR-50008">No summary for method validate_client()</error>
-      <error line="12" code="PPC:ERR-50007">No summary for property $region</error>
-      <error line="13" code="PPC:ERR-50007">No summary for property $aws</error>
-      <error line="14" code="PPC:ERR-50007">No summary for property $sqs</error>
-      <error line="15" code="PPC:ERR-50007">No summary for property $sts</error>
-    </parse_markers>
-    <source>eJy1WFtT2zgUfs+vEB6mtpkA+9KXsKUTkmw3LYUWh213Ssej2EpQ60iJJaebZfLf9+hixzeWy249A8jSOUfn9n2S+fX18nbZ6TC8IGKJI4KC/kmnc3yM+gv8N2coodMUp5SITiYI6v8QNwO+WHB2A8OTYi5YlV8kvHSiBAuBBksySChhMoi/d+46CJ5lStdYErSfkjnl7KQ6iZXZyoxYNWakndG/wNf3Yo4mmyU4qSYizoREwaR/NQnfXp6h4nmFnGLWOcmVP3/+jPpxjBZUCMrmKMJJIvJFY2vQvxiMzivGwNZuFoxphVnGIgkxoTDUimkWSa+Tq+x/JxvQm+FEkO5uVpAoJbJlweSnZSEm02yez+tpX/++K0ToDHl7er8XL4pJ9ex51os5kYStPaf/KQj7g8EoCMJ3oz/D8dDxfb+iIm9T/gMx8gPdjP6KyFIF6DkBuOw2lF0ERmnK2QJKjtbQOHiakD3HP6m5ZoNueldko+xgMBpcjSZqj6d6t9N8tGs27U3XinqUXRuOfutfn0/Cq9Gb8eXFU92raj/CxV0TyFsqDk8LnypoKgmYXlECemQbVT3Q3YOUKECBJygYvkMUWhaziNRtACbBAEC715vhSPJ04+E0xRuvEqp6XOOFi16d5h5VZHy/4SCAWXlX7HR4Cun1XCARt0V41S68KoS3FWL4wJMEcUYQsJvAc4KwRBhJuiBolvIFlIcArfA1jUmMgo8BWmUkI7n2x+JlmU0TGu3wnZKI0DUJrVlvP9Ik1wXXwDbPZB2QkP2IwyaGDCEGKkI+/UaAH6yuj14jO0Q99E1wFhqdQqBUu33tp6lqye7h6Z2rV4S7VWNwZJlJd1tt8XJnVLvVriR8HoJqs7zOcHR2/cbpouaKyrRiT51W1/jnoqOjI6faAC2tnNdJq6oiSI6iWxJ9RzOeauzk1Stzo8gSuesFaAwFBl2V97Yo9/WoLut1mrj5jGpW7XC3KfwJUzmBmgaQZxYL09m2yN17e7se3xsAvOq1PBAoA2Yb+ImhlWSWMkSlClvJqPOHpJWKeftWURikq9ht69tgof/9OmVFPGNyp1pipruK3L/3hE73A32hnvt7Q69e7MooFHwoWQPkKDOI6xUt4zTU70uremzyihi//PJ1J71tIYQhSYC8gQPyShRNV0H+hKOprUQM/AHXonL1brGAZcKAFrTAdKOX8XIJJIFlTnp10oj13i2csRDzn8MXtfppkBgvnoWRR3FNC4auFC6X8ndo94S41hgE/aW28tVvowdbY7hMkZzi8zIFBACENUWouxkASFVyzMCRUj3rdYBDLpXhNz4tlYAqHfgLs+MY0s2gsj+5Jtaa8bZiTDujbelR3ZRZLp0G5t5S8c6vYbx0DxmzNU5o3E/nmbpn7K4lTVK3ouhtcHmBXBOCq9KsU6jNQcIqF5Rtu1djE9L/75ROxoM+1ZGgLcDVJzQxebXklU/avCPs4HUPLeKXXhML6gvK3aIjlDG6orHnul3VspUbD/T87siKUjyTIfgbwnQ1TkGSWa9XfKtUIWUcqc2V01ysVOIoUYAA2DyJAB4Ev6lCG/btPmc83uizU3cyYaaTFfE1D9E68j0TsV9Hv/pwm1wOL837QQPnkbrLJhroPjo4zsXuSuOtGj+gDzdeuqZy8zwjcEgrD8KECvnfLEB/y0w830Yex6MMqXFu7cAU5ABdT8bngX05LsrwIaVAd7BJMBleXk8qn+qFA/nVYV/CZ3q3OLDrFEuiW+45X7TU10LqhjmN4g8Ueiz3K9K3ou27V6GW+2BwBJ2NJW5wvYFqCzpcdfmzh9iCRilX756GercmCNvkp53esrqsakpjc6FsgbSr3MrV1bgV1sUFSMzrGfrDchyy55U5XdoT1OBDe1y1/VuBCkEKCQC/o5jP2T7qw7c4Q9QVinFkWLP5Ed7Yw5DNc3exVPWEfUqk9rwt7bmk7T1x3/wm9byNrbbZGe3tkLPt/AMaBXB/</source>
+    <markers>
+      <fixme line="71">Add missing calls</fixme>
+      <fixme line="221">Need to implement those methods</fixme>
+    </markers>
+    <source>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</source>
   </file>
   <package name="Default" full_name="Default"/>
   <package name="global" full_name="global"/>
