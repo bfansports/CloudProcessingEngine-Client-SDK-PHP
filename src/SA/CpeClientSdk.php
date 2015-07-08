@@ -65,6 +65,8 @@ class CpeClientSdk
      * You can use AWS roles with your EC2 instance instead of passing AWS credentials.
      */
     private $sts;
+    /** Debug flag **/
+    private $debug;
     
     // Msg Types
     const START_JOB          = "START_JOB";
@@ -85,7 +87,7 @@ class CpeClientSdk
      *
      * @return void
      */
-    function __construct($key = false, $secret = false, $region = false, $debug = false)
+    public function __construct($key = false, $secret = false, $region = false, $debug = false)
     {
         if (!$key &&
             !($key = getenv("AWS_ACCESS_KEY_ID")))
@@ -218,31 +220,12 @@ class CpeClientSdk
         return ($jobId);
     }
 
-    // FIXME: Need to implement those methods
-    
-    /* public function cancel_job() */
-    /* { */
-    /* } */
-
-    /* public function cancel_activity() */
-    /* { */
-    /* } */
-
-    /* public function get_job_list() */
-    /* { */
-    /* } */
-
-    /* public function get_job_status() */
-    /* { */
-    /* } */
-
-    /* public function get_activity_status() */
-    /* { */
-    /* } */
-    
-
     /**
-     * UTILS
+     * FIXME: Need to implement other methods
+     *
+     * We can implement more methods such as:
+     *    - cancel_job()
+     *    - cancel_activity()
      */
     
     /** 
