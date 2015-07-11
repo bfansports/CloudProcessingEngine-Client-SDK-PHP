@@ -209,6 +209,7 @@ class CpeClientSdk
         $msg = $this->craft_new_msg(
             self::START_JOB,
             $jobId,
+            $decodedClient,
             $decodedInput
         );
 
@@ -246,8 +247,9 @@ class CpeClientSdk
      * @param string $jobId Job ID for the command
      * @param string $data Data payload to be sent out
      */
-    private function craft_new_msg($type, $jobId, $data)
+    private function craft_new_msg($type, $jobId, $client, $data)
     {
+        $data->{'client'} = $client;
         $msg = array(
             'time'   => microtime(true),
             'type'   => $type,
