@@ -249,11 +249,13 @@ class CpeClientSdk
      */
     private function craft_new_msg($type, $jobId, $client, $data)
     {
+        // Add client info to data
         $data->{'client'} = $client;
+        // Build msg to send out
         $msg = array(
             'time'   => microtime(true),
             'type'   => $type,
-            'job_id' => $jobId,
+            'jobId'  => $jobId,
             'data'   => $data
         );
 
