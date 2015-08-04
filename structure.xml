@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project title="Cloud Processing Engine Client SDK PHP" version="2.8.5">
   <partials/>
-  <file path="CpeClientSdk.php" generated-path="CpeClientSdk.html" hash="c938f130e206a560cf4ed4822a3364c4" package="Default">
+  <file path="CpeClientSdk.php" generated-path="CpeClientSdk.html" hash="fb46ef3df8fd2048f0a2428c4760b72e" package="Default">
     <docblock line="0">
       <description>Copyright (C) 2015, Sport Archive Inc.</description>
       <long-description>This program is free software; you can redistribute it and/or modify
@@ -250,16 +250,16 @@ You can also specify your own jobId, or it will generate it for you.</long-descr
           <type>string|null</type>
         </argument>
       </method>
-      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="231" package="Default">
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="232" package="Default">
         <name>log_out</name>
         <full_name>\SA\CpeClientSdk::log_out()</full_name>
-        <docblock line="231">
+        <docblock line="232">
           <description>Simple logout function</description>
           <long-description></long-description>
-          <tag name="param" line="231" description="&lt;p&gt;Type of log message (error, debug, etc)&lt;/p&gt;" type="string" variable="$type">
+          <tag name="param" line="232" description="&lt;p&gt;Type of log message (error, debug, etc)&lt;/p&gt;" type="string" variable="$type">
             <type>string</type>
           </tag>
-          <tag name="param" line="231" description="&lt;p&gt;Message to be printed out&lt;/p&gt;" type="string" variable="$message">
+          <tag name="param" line="232" description="&lt;p&gt;Message to be printed out&lt;/p&gt;" type="string" variable="$message">
             <type>string</type>
           </tag>
         </docblock>
@@ -274,19 +274,19 @@ You can also specify your own jobId, or it will generate it for you.</long-descr
           <type>string</type>
         </argument>
       </method>
-      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="243" package="Default">
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="244" package="Default">
         <name>craft_new_msg</name>
         <full_name>\SA\CpeClientSdk::craft_new_msg()</full_name>
-        <docblock line="243">
+        <docblock line="244">
           <description>Craft the object to be sent out to SQS</description>
           <long-description></long-description>
-          <tag name="param" line="243" description="&lt;p&gt;Type of CPE command you send&lt;/p&gt;" type="string" variable="$type">
+          <tag name="param" line="244" description="&lt;p&gt;Type of CPE command you send&lt;/p&gt;" type="string" variable="$type">
             <type>string</type>
           </tag>
-          <tag name="param" line="243" description="&lt;p&gt;Job ID for the command&lt;/p&gt;" type="string" variable="$jobId">
+          <tag name="param" line="244" description="&lt;p&gt;Job ID for the command&lt;/p&gt;" type="string" variable="$jobId">
             <type>string</type>
           </tag>
-          <tag name="param" line="243" description="&lt;p&gt;Data payload to be sent out&lt;/p&gt;" type="string" variable="$data">
+          <tag name="param" line="244" description="&lt;p&gt;Data payload to be sent out&lt;/p&gt;" type="string" variable="$data">
             <type>string</type>
           </tag>
         </docblock>
@@ -301,18 +301,23 @@ You can also specify your own jobId, or it will generate it for you.</long-descr
           <type>string</type>
         </argument>
         <argument line="0" by_reference="false">
+          <name>$client</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
           <name>$data</name>
           <default></default>
           <type>string</type>
         </argument>
       </method>
-      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="260" package="Default">
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SA" line="264" package="Default">
         <name>validate_client</name>
         <full_name>\SA\CpeClientSdk::validate_client()</full_name>
-        <docblock line="260">
+        <docblock line="264">
           <description>Validate Client object structure</description>
           <long-description></long-description>
-          <tag name="param" line="260" description="&lt;p&gt;JSON string or PHP Object created using json_decode. This contains your client SQS configuration which list your application &lt;code&gt;input&lt;/code&gt; and &lt;code&gt;output&lt;/code&gt; queues.&lt;/p&gt;" type="string|object" variable="$client">
+          <tag name="param" line="264" description="&lt;p&gt;JSON string or PHP Object created using json_decode. This contains your client SQS configuration which list your application &lt;code&gt;input&lt;/code&gt; and &lt;code&gt;output&lt;/code&gt; queues.&lt;/p&gt;" type="string|object" variable="$client">
             <type>string</type>
             <type>object</type>
           </tag>
@@ -327,7 +332,10 @@ You can also specify your own jobId, or it will generate it for you.</long-descr
     <markers>
       <fixme line="73">Add missing calls</fixme>
     </markers>
-    <source>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</source>
+    <parse_markers>
+      <error line="244" code="PPC:ERR-50015">Argument $data is missing from the Docblock of craft_new_msg</error>
+    </parse_markers>
+    <source>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</source>
   </file>
   <package name="Default" full_name="Default"/>
   <package name="global" full_name="global"/>
