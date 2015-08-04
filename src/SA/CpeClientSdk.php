@@ -89,12 +89,6 @@ class CpeClientSdk
      */
     public function __construct($key = false, $secret = false, $region = false, $debug = false)
     {
-        if (!$key &&
-            !($key = getenv("AWS_ACCESS_KEY_ID")))
-            throw new \Exception("Set 'AWS_ACCESS_KEY_ID' environment variable!");
-        if (!$secret &&
-            !($secret = getenv("AWS_SECRET_KEY")))
-            throw new \Exception("Set 'AWS_SECRET_KEY' environment variable!");
         if (!$region &&
             !($region = getenv("AWS_DEFAULT_REGION")))
             throw new \Exception("Set 'AWS_DEFAULT_REGION' environment variable!");
