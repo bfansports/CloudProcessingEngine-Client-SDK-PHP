@@ -28,10 +28,6 @@
 
 namespace SA;
 
-use Aws\Common\Aws;
-use Aws\Sqs;
-use Aws\Sts;
-
 /**
  * The CpeClientSDK is to be used by client applications of the 
  * Client Processing Engine (CPE) project.
@@ -55,8 +51,6 @@ class CpeClientSdk
 {
     /** AWS region for SQS **/
     private $region;
-    /** AWS SDK handler **/
-    private $aws;
     /** AWS SQS handler **/
     private $sqs;
     /** 
@@ -97,11 +91,14 @@ class CpeClientSdk
         $this->debug  = $debug;
 
         // Create AWS SDK instance
-        $this->aws = Aws::factory(array(
-                'region' => $region
-            ));
-        $this->sts = $this->aws->get('Sts');
-        $this->sqs = $this->aws->get('Sqs');
+        $this->sts = new \Aws\Sts\StsClient([
+                'region'  => $region,
+                'version' => 'latest'
+            ]);
+        $this->sqs = new \Aws\Sqs\SqsClient([
+                'region' => $region,
+                'version' => 'latest'
+            ]);
     }
     
     /**
